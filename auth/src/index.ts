@@ -24,7 +24,7 @@ type UserDataWId = userData & {id: ObjectId};
 
 
 async function connectDB(): Promise<MongoClient> {
-    const uri = process.env.DATABASE_URL;
+    const uri = process.env.DATABASE_URL || 'mongodb://localhost:27017';
   
     if (uri === undefined) {
       throw Error('DATABASE_URL environment variable is not specified');
@@ -36,31 +36,19 @@ async function connectDB(): Promise<MongoClient> {
   }
 
 async function addUser(mongo: MongoClient, user: userData) : Promise<ObjectId>{
-    const users = mongo.db().collection('users');
+    const users = mongo.db("auth").collection('users');
     const result = await users.insertOne(user);
     return result.insertedId;
 }
 
 async function getUser(mongo: MongoClient, tagName: string, password: string){
-    const users = mongo.db().collection('users');
+    const users = mongo.db("auth").collection('users');
     const user = (await users.findOne({tagName: tagName}));
     if(user){
-        const match = await bcrypt.compare(password, user.password);
-        if(match){
-            return user;
-        }
+        return user;
     }
 
     return undefined;
-}
-
-async function getJSONData(){
-    const json = fs.readFileSync("./users.json")
-    return JSON.parse(json.toString());
-}
-
-function uploadJSON(json : Object){
-    fs.writeFileSync("./users.json", JSON.stringify(json), "utf-8");
 }
 
 app.post("/signup", async (req : Request, res : Response) => {
@@ -96,7 +84,7 @@ app.post("/login", async (req : Request, res: Response) => {
     const user = await getUser(mongo, tagName, password);
 
     if(!user){
-        res.status(400).send("User not found!");
+        res.status(404).send("User not found!");
         return;
     }
 
@@ -111,4 +99,12 @@ app.post("/login", async (req : Request, res: Response) => {
 
     res.send("Logged in!");
 })
+
+app.post("/events", async (req : Request, res: Response) => {
+    if(!req.body.type || !req.body.data){
+        res.status(400).send("Invalid Details!");
+        return;
+    }
+    const {type, data} = req.body;
+});
 app.listen(4000, () => console.log("Listening on port 4000"))

@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -45,12 +56,70 @@ var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var express_session_1 = __importDefault(require("express-session"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var fs_1 = __importDefault(require("fs"));
+var mongodb_1 = require("mongodb");
 var app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 app.use((0, express_session_1.default)({ secret: "Your secret key" }));
-console.log("Test");
+function connectDB() {
+    return __awaiter(this, void 0, void 0, function () {
+        var uri, mongo;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    uri = process.env.DATABASE_URL || 'mongodb://localhost:27017';
+                    if (uri === undefined) {
+                        throw Error('DATABASE_URL environment variable is not specified');
+                    }
+                    mongo = new mongodb_1.MongoClient(uri);
+                    return [4 /*yield*/, mongo.connect()];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, Promise.resolve(mongo)];
+                case 2: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+function addUser(mongo, user) {
+    return __awaiter(this, void 0, void 0, function () {
+        var users, result;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    users = mongo.db("auth").collection('users');
+                    return [4 /*yield*/, users.insertOne(user)];
+                case 1:
+                    result = _a.sent();
+                    return [2 /*return*/, result.insertedId];
+            }
+        });
+    });
+}
+function getUser(mongo, tagName, password) {
+    return __awaiter(this, void 0, void 0, function () {
+        var users, user, match;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    users = mongo.db("auth").collection('users');
+                    return [4 /*yield*/, users.findOne({ tagName: tagName })];
+                case 1:
+                    user = (_a.sent());
+                    if (!user) return [3 /*break*/, 3];
+                    return [4 /*yield*/, bcrypt_1.default.compare(password, user.password)];
+                case 2:
+                    match = _a.sent();
+                    if (match) {
+                        return [2 /*return*/, user];
+                    }
+                    _a.label = 3;
+                case 3: return [2 /*return*/, undefined];
+            }
+        });
+    });
+}
 function getJSONData() {
     return __awaiter(this, void 0, void 0, function () {
         var json;
@@ -64,7 +133,7 @@ function uploadJSON(json) {
     fs_1.default.writeFileSync("./users.json", JSON.stringify(json), "utf-8");
 }
 app.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, firstName, lastName, tagName, password, salt, hashedPassword, newUser, users, id;
+    var _a, firstName, lastName, tagName, password, mongo, salt, hashedPassword, newUser, id, user;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -73,28 +142,27 @@ app.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 
                     return [2 /*return*/];
                 }
                 _a = req.body, firstName = _a.firstName, lastName = _a.lastName, tagName = _a.tagName, password = _a.password;
-                return [4 /*yield*/, bcrypt_1.default.genSalt(5)];
+                return [4 /*yield*/, connectDB()];
             case 1:
+                mongo = _b.sent();
+                return [4 /*yield*/, bcrypt_1.default.genSalt(5)];
+            case 2:
                 salt = _b.sent();
                 return [4 /*yield*/, bcrypt_1.default.hash(password, salt)];
-            case 2:
+            case 3:
                 hashedPassword = _b.sent();
                 newUser = { firstName: firstName, lastName: lastName, tagName: tagName, password: hashedPassword };
-                return [4 /*yield*/, getJSONData()];
-            case 3:
-                users = _b.sent();
-                id = users.length + "";
-                users.push({ id: id, firstName: firstName, lastName: lastName, tagName: tagName, password: hashedPassword });
-                uploadJSON(users);
-                //save session
-                Object.assign(req.session, { id: id, firstName: firstName, lastName: lastName, tagName: tagName, password: hashedPassword });
-                res.json({ id: id, firstName: firstName, lastName: lastName, tagName: tagName, password: hashedPassword });
+                return [4 /*yield*/, addUser(mongo, newUser)];
+            case 4:
+                id = _b.sent();
+                user = __assign(__assign({}, newUser), { id: id });
+                res.json(user);
                 return [2 /*return*/];
         }
     });
 }); });
 app.post("/login", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, tagName, password, users, user, id, validPassword;
+    var _a, tagName, password, mongo, user, validPassword;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -103,24 +171,24 @@ app.post("/login", function (req, res) { return __awaiter(void 0, void 0, void 0
                     return [2 /*return*/];
                 }
                 _a = req.body, tagName = _a.tagName, password = _a.password;
-                return [4 /*yield*/, getJSONData()];
+                return [4 /*yield*/, connectDB()];
             case 1:
-                users = _b.sent();
-                user = users.find(function (user) { return user.tagName === tagName; });
-                id = (user === null || user === void 0 ? void 0 : user.id) + "";
+                mongo = _b.sent();
+                return [4 /*yield*/, getUser(mongo, tagName, password)];
+            case 2:
+                user = _b.sent();
                 if (!user) {
                     res.status(400).send("User not found!");
                     return [2 /*return*/];
                 }
                 return [4 /*yield*/, bcrypt_1.default.compare(password, user.password)];
-            case 2:
+            case 3:
                 validPassword = _b.sent();
                 if (!validPassword) {
                     res.status(400).send("Invalid password!");
                     return [2 /*return*/];
                 }
-                //save session
-                Object.assign(req.session, { id: id, firstName: user.firstName, lastName: user.lastName, tagName: user.tagName, password: user.password });
+                console.log(user);
                 res.send("Logged in!");
                 return [2 /*return*/];
         }
