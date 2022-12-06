@@ -70,7 +70,7 @@ app.post("/auth/signup", async (req : Request, res : Response) => {
 
     const user : UserDataWId = {...newUser, id};
 
-    await axios.post("http://localhost:4001/users/events", {
+    await axios.post("http://users:4001/users/events", {
         type: "UserCreated",
         data: user
     });
