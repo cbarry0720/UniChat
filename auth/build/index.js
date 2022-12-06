@@ -55,7 +55,7 @@ var body_parser_1 = __importDefault(require("body-parser"));
 var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var express_session_1 = __importDefault(require("express-session"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
-var fs_1 = __importDefault(require("fs"));
+var axios_1 = __importDefault(require("axios"));
 var mongodb_1 = require("mongodb");
 var app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
@@ -97,9 +97,9 @@ function addUser(mongo, user) {
         });
     });
 }
-function getUser(mongo, tagName, password) {
+function getUser(mongo, tagName) {
     return __awaiter(this, void 0, void 0, function () {
-        var users, user, match;
+        var users, user;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -107,32 +107,15 @@ function getUser(mongo, tagName, password) {
                     return [4 /*yield*/, users.findOne({ tagName: tagName })];
                 case 1:
                     user = (_a.sent());
-                    if (!user) return [3 /*break*/, 3];
-                    return [4 /*yield*/, bcrypt_1.default.compare(password, user.password)];
-                case 2:
-                    match = _a.sent();
-                    if (match) {
+                    if (user) {
                         return [2 /*return*/, user];
                     }
-                    _a.label = 3;
-                case 3: return [2 /*return*/, undefined];
+                    return [2 /*return*/, undefined];
             }
         });
     });
 }
-function getJSONData() {
-    return __awaiter(this, void 0, void 0, function () {
-        var json;
-        return __generator(this, function (_a) {
-            json = fs_1.default.readFileSync("./users.json");
-            return [2 /*return*/, JSON.parse(json.toString())];
-        });
-    });
-}
-function uploadJSON(json) {
-    fs_1.default.writeFileSync("./users.json", JSON.stringify(json), "utf-8");
-}
-app.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+app.post("/auth/signup", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, firstName, lastName, tagName, password, mongo, salt, hashedPassword, newUser, id, user;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -156,12 +139,18 @@ app.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 
             case 4:
                 id = _b.sent();
                 user = __assign(__assign({}, newUser), { id: id });
+                return [4 /*yield*/, axios_1.default.post("http://localhost:4001/users/events", {
+                        type: "UserCreated",
+                        data: user
+                    })];
+            case 5:
+                _b.sent();
                 res.json(user);
                 return [2 /*return*/];
         }
     });
 }); });
-app.post("/login", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+app.post("/auth/login", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, tagName, password, mongo, user, validPassword;
     return __generator(this, function (_b) {
         switch (_b.label) {
@@ -174,11 +163,11 @@ app.post("/login", function (req, res) { return __awaiter(void 0, void 0, void 0
                 return [4 /*yield*/, connectDB()];
             case 1:
                 mongo = _b.sent();
-                return [4 /*yield*/, getUser(mongo, tagName, password)];
+                return [4 /*yield*/, getUser(mongo, tagName)];
             case 2:
                 user = _b.sent();
                 if (!user) {
-                    res.status(400).send("User not found!");
+                    res.status(404).send("User not found!");
                     return [2 /*return*/];
                 }
                 return [4 /*yield*/, bcrypt_1.default.compare(password, user.password)];
@@ -191,6 +180,92 @@ app.post("/login", function (req, res) { return __awaiter(void 0, void 0, void 0
                 console.log(user);
                 res.send("Logged in!");
                 return [2 /*return*/];
+        }
+    });
+}); });
+app.post("/auth/events", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, type, data, tagName, password, newPassword, mongo, user, validPassword, salt, hashedPassword, users, result, tagName, firstName, mongo, user, users, result, tagName, lastName, mongo, user, users, result;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                if (!req.body.type || !req.body.data) {
+                    res.status(400).send("Invalid Details!");
+                    return [2 /*return*/];
+                }
+                _a = req.body, type = _a.type, data = _a.data;
+                if (!(type == "UpdatePassword")) return [3 /*break*/, 7];
+                tagName = data.tagName, password = data.password, newPassword = data.newPassword;
+                return [4 /*yield*/, connectDB()];
+            case 1:
+                mongo = _b.sent();
+                return [4 /*yield*/, getUser(mongo, tagName)];
+            case 2:
+                user = _b.sent();
+                if (!user) {
+                    res.status(404).send("User not found!");
+                    return [2 /*return*/];
+                }
+                return [4 /*yield*/, bcrypt_1.default.compare(password, user.password)];
+            case 3:
+                validPassword = _b.sent();
+                if (!validPassword) {
+                    res.status(400).send("Invalid password!");
+                    return [2 /*return*/];
+                }
+                return [4 /*yield*/, bcrypt_1.default.genSalt(5)];
+            case 4:
+                salt = _b.sent();
+                return [4 /*yield*/, bcrypt_1.default.hash(newPassword, salt)];
+            case 5:
+                hashedPassword = _b.sent();
+                users = mongo.db("auth").collection('users');
+                return [4 /*yield*/, users.updateOne({ _id: user._id }, { $set: { password: hashedPassword } })];
+            case 6:
+                result = _b.sent();
+                res.send("Password updated!");
+                return [3 /*break*/, 16];
+            case 7:
+                if (!(type == "UpdateFirstName")) return [3 /*break*/, 11];
+                tagName = data.tagName, firstName = data.firstName;
+                return [4 /*yield*/, connectDB()];
+            case 8:
+                mongo = _b.sent();
+                return [4 /*yield*/, getUser(mongo, tagName)];
+            case 9:
+                user = _b.sent();
+                if (!user) {
+                    res.status(404).send("User not found!");
+                    return [2 /*return*/];
+                }
+                users = mongo.db("auth").collection('users');
+                return [4 /*yield*/, users.updateOne({ _id: user._id }, { $set: { firstName: firstName } })];
+            case 10:
+                result = _b.sent();
+                res.send("First name updated!");
+                return [3 /*break*/, 16];
+            case 11:
+                if (!(type == "UpdateLastName")) return [3 /*break*/, 15];
+                tagName = data.tagName, lastName = data.lastName;
+                return [4 /*yield*/, connectDB()];
+            case 12:
+                mongo = _b.sent();
+                return [4 /*yield*/, getUser(mongo, tagName)];
+            case 13:
+                user = _b.sent();
+                if (!user) {
+                    res.status(404).send("User not found!");
+                    return [2 /*return*/];
+                }
+                users = mongo.db("auth").collection('users');
+                return [4 /*yield*/, users.updateOne({ _id: user._id }, { $set: { lastName: lastName } })];
+            case 14:
+                result = _b.sent();
+                res.send("Last name updated!");
+                return [3 /*break*/, 16];
+            case 15:
+                res.status(400).send("Invalid event type!");
+                _b.label = 16;
+            case 16: return [2 /*return*/];
         }
     });
 }); });
