@@ -21,7 +21,19 @@ app.get("/users/all", async (req, res) => {
     const mongo = await connectDB();
     const users = mongo.db("users").collection('users');
     const allUsers = await users.find({}).toArray();
-    res.send(allUsers);
+    res.send(allUsers.map(user => {
+        return {
+            userID: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            tagName: user.tagName,
+            posts: user.posts,
+            comments: user.comments,
+            upvotes: user.upvotes,
+            downvotes: user.downvotes,
+            courses: user.courses,
+            deadlines: user.deadlines
+            }}));
 });
 
 app.get("/users/:id", async (req, res) => {
@@ -32,7 +44,18 @@ app.get("/users/:id", async (req, res) => {
         res.status(404).send("User Not Found!");
         return;
     }
-    res.send(user);
+    res.send({
+        userID: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        tagName: user.tagName,
+        posts: user.posts,
+        comments: user.comments,
+        upvotes: user.upvotes,
+        downvotes: user.downvotes,
+        courses: user.courses,
+        deadlines: user.deadlines
+    });
 });
 
 app.post("/users/events", async (req, res) => {
