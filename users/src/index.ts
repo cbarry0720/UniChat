@@ -66,6 +66,7 @@ app.post("/users/events", async (req, res) => {
         res.status(400).send("Invalid Details!");
         return;
     }
+    console.log(req.body)
     const {type, data} = req.body;
     if(type === "UserCreated"){
         const mongo = await connectDB();
@@ -91,9 +92,9 @@ app.post("/users/events", async (req, res) => {
     }else if(type === "PostCreated"){
         const mongo = await connectDB();
         const users = mongo.db("users").collection('users');
-        const user = await users.findOne({_id: data.userID});
+        const user = await users.findOne({userID: data.userID});
         if(user){
-            const updatedUser = await users.updateOne({_id: data.userID}, {$push: {posts: data.postID}});
+            const updatedUser = await users.updateOne({userID: data.userID}, {$push: {posts: data.postID}});
             if(updatedUser){
                 res.send("Post Created!");
             }else{

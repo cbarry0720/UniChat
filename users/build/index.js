@@ -136,6 +136,7 @@ app.post("/users/events", function (req, res) { return __awaiter(void 0, void 0,
                     res.status(400).send("Invalid Details!");
                     return [2 /*return*/];
                 }
+                console.log(req.body);
                 _a = req.body, type = _a.type, data = _a.data;
                 if (!(type === "UserCreated")) return [3 /*break*/, 3];
                 return [4 /*yield*/, connectDB()];
@@ -170,11 +171,11 @@ app.post("/users/events", function (req, res) { return __awaiter(void 0, void 0,
             case 4:
                 mongo = _b.sent();
                 users = mongo.db("users").collection('users');
-                return [4 /*yield*/, users.findOne({ _id: data.userID })];
+                return [4 /*yield*/, users.findOne({ userID: data.userID })];
             case 5:
                 user = _b.sent();
                 if (!user) return [3 /*break*/, 7];
-                return [4 /*yield*/, users.updateOne({ _id: data.userID }, { $push: { posts: data.postID } })];
+                return [4 /*yield*/, users.updateOne({ userID: data.userID }, { $push: { posts: data.postID } })];
             case 6:
                 updatedUser = _b.sent();
                 if (updatedUser) {
