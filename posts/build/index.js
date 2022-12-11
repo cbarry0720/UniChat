@@ -42,8 +42,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var mongodb_1 = require("mongodb");
 var body_parser_1 = __importDefault(require("body-parser"));
+var axios_1 = __importDefault(require("axios"));
+var cors_1 = __importDefault(require("cors"));
 var app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
+app.use((0, cors_1.default)());
 function connectDB() {
     return __awaiter(this, void 0, void 0, function () {
         var uri, mongo;
@@ -81,14 +84,15 @@ app.get("/posts/all", function (req, res) { return __awaiter(void 0, void 0, voi
     });
 }); });
 app.get("/posts/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var mongo, posts, post;
+    var mongo, posts, id, post;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, connectDB()];
             case 1:
                 mongo = _a.sent();
                 posts = mongo.db("posts").collection('posts');
-                return [4 /*yield*/, posts.findOne({ _id: req.params.id })];
+                id = new mongodb_1.ObjectId(req.params.id);
+                return [4 /*yield*/, posts.findOne({ _id: id })];
             case 2:
                 post = _a.sent();
                 if (!post) {
@@ -124,18 +128,32 @@ app.post("/posts/create", function (req, res) { return __awaiter(void 0, void 0,
                     })];
             case 2:
                 id = _b.sent();
-                if (id) {
-                    res.status(201).send({
-                        postID: id.insertedId,
-                        userID: userID,
-                        postText: postText,
-                        postMedia: postMedia,
-                        postUpvotes: [],
-                        postDownvotes: [],
-                        postComments: []
-                    });
-                    return [2 /*return*/];
-                }
+                if (!id) return [3 /*break*/, 4];
+                return [4 /*yield*/, axios_1.default.post("http://localhost:4001/users/events", {
+                        type: "PostCreated",
+                        data: {
+                            postID: id.insertedId,
+                            userID: userID,
+                            postText: postText,
+                            postMedia: postMedia,
+                            postUpvotes: [],
+                            postDownvotes: [],
+                            postComments: []
+                        }
+                    })];
+            case 3:
+                _b.sent();
+                res.status(201).send({
+                    postID: id.insertedId,
+                    userID: userID,
+                    postText: postText,
+                    postMedia: postMedia,
+                    postUpvotes: [],
+                    postDownvotes: [],
+                    postComments: []
+                });
+                return [2 /*return*/];
+            case 4:
                 res.status(500).send("Internal Server Error!");
                 return [2 /*return*/];
         }
