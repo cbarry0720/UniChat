@@ -1,0 +1,13 @@
+.main-page{
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow: hidden;
+}
+.posts-container{
+    width: 60rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
