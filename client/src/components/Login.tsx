@@ -83,9 +83,10 @@ export default function Login({setUser} : LoginProps) {
 
     return (
         <div className="container m-5">
+            <h1 className="title">UniChat</h1>
             <div className="row justify-content-between">
                 <div className="login-container col" id="login">
-                    <h1>Login</h1>
+                    <h2>Login</h2>
                     <form onSubmit={onLogin}>
                         <div className="mb-3">
                             <label className="form-label">Tagname</label>
@@ -98,7 +99,7 @@ export default function Login({setUser} : LoginProps) {
                     </form>
                 </div>
                 <div className="login-container col">
-                    <h1>Signup</h1>
+                    <h2>Signup</h2>
                     <form onSubmit={onSignup}>
                         <div className="mb-3">
                             <label className="form-label">Tagname</label>

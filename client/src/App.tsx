@@ -3,6 +3,7 @@ import Login from "./components/Login";
 import logo from './logo.svg';
 import { Router, Route, Link } from 'react-router-dom';
 import './App.css';
+import MainPage from './views/MainPage';
 
 type User = {
   userID : string,
@@ -39,19 +40,7 @@ function App() {
     )
   }else{
     return (
-      <div>
-        <h1>Logged in!</h1>
-        <h2>{user.firstName}</h2>
-        <h2>{user.lastName}</h2>
-        <h2>{user.tagName}</h2>
-        <h2>{user.password}</h2>
-        <h2>{user.posts}</h2>
-        <h2>{user.comments}</h2>
-        <h2>{user.upvotes}</h2>
-        <h2>{user.downvotes}</h2>
-        <h2>{user.courses}</h2>
-        <h2>{user.deadlines}</h2>
-      </div>
+      <MainPage user={user}/>
     )
   }
 }
