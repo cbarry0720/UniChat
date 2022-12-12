@@ -19,14 +19,22 @@ services:
       DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/users?directConnection=true&authSource=admin
 
   deadline:
-    build: ./users
+    build: ./deadline
     ports:
       - "4007:4007"
     depends_on:
       - mongodb_container
     environment:
-      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/deadlines?directConnection=true&authSource=admin
+      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/deadline?directConnection=true&authSource=admin
 
+  group:
+    build: ./group
+    ports:
+      - "4008:4008"
+    depends_on:
+      - mongodb_container
+    environment:
+      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/group?directConnection=true&authSource=admin
   
   mongodb_container:
     image: mongo:latest
