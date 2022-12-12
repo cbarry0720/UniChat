@@ -27,6 +27,15 @@ services:
     environment:
       DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/deadline?directConnection=true&authSource=admin
 
+  votes:
+    build: ./votes
+    ports:
+      - "4006:4006"
+    depends_on:
+      - mongodb_container
+    environment:
+      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/votes?directConnection=true&authSource=admin
+
   group:
     build: ./group
     ports:

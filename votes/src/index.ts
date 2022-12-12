@@ -32,12 +32,37 @@ app.get("/votes/:id", async (req, res) => {
   const votes = mongo.db("votes").collection('votes');
   const vote = await votes.findOne({_id: req.params.id});
   if(!vote){
-      res.status(404).send("Group Not Found!");
+      res.status(404).send("votes Not Found!");
       return;
   }
   res.send(vote);
 });
 
+//this will handle the votes
+app.post("/votes/create", async (req, res) => {
+  if(!req.body.userID || !req.body.voteType || !req.body.postID){
+      res.status(400).send("Invalid Group!");
+      return;
+  }
+  const {userID, voteType, postID} = req.body;
+  const mongo = await connectDB();
+  const votes = mongo.db("votes").collection('votes');
+  const id = await votes.insertOne({
+    voter: userID,
+    postID: postID,
+    voteType: voteType,
+  });
+  if(id){
+      res.status(201).send({
+          voteID: id.insertedId,
+          voter: userID,
+          postID: postID,
+          voteType: voteType,
+      });
+      return;
+  }
+  res.status(500).send("Internal Server Error!");
+});
 
 app.listen(4006, () => {
   console.log(`Running on ${4006}.`);

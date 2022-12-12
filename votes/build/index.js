@@ -117,10 +117,46 @@ app.get("/votes/:id", function (req, res) { return __awaiter(void 0, void 0, voi
             case 2:
                 vote = _a.sent();
                 if (!vote) {
-                    res.status(404).send("Group Not Found!");
+                    res.status(404).send("votes Not Found!");
                     return [2 /*return*/];
                 }
                 res.send(vote);
+                return [2 /*return*/];
+        }
+    });
+}); });
+//this will handle the votes
+app.post("/votes/create", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, userID, voteType, postID, mongo, votes, id;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                if (!req.body.userID || !req.body.voteType || !req.body.postID) {
+                    res.status(400).send("Invalid Group!");
+                    return [2 /*return*/];
+                }
+                _a = req.body, userID = _a.userID, voteType = _a.voteType, postID = _a.postID;
+                return [4 /*yield*/, connectDB()];
+            case 1:
+                mongo = _b.sent();
+                votes = mongo.db("votes").collection('votes');
+                return [4 /*yield*/, votes.insertOne({
+                        voter: userID,
+                        postID: postID,
+                        voteType: voteType,
+                    })];
+            case 2:
+                id = _b.sent();
+                if (id) {
+                    res.status(201).send({
+                        voteID: id.insertedId,
+                        voter: userID,
+                        postID: postID,
+                        voteType: voteType,
+                    });
+                    return [2 /*return*/];
+                }
+                res.status(500).send("Internal Server Error!");
                 return [2 /*return*/];
         }
     });
