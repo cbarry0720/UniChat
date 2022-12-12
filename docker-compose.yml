@@ -18,6 +18,16 @@ services:
     environment:
       DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/users?directConnection=true&authSource=admin
 
+  deadline:
+    build: ./users
+    ports:
+      - "4007:4007"
+    depends_on:
+      - mongodb_container
+    environment:
+      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/deadlines?directConnection=true&authSource=admin
+
+  
   mongodb_container:
     image: mongo:latest
     environment:

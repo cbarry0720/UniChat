@@ -62,7 +62,7 @@ app.post("/deadline/create", async (req, res) => {
   res.status(500).send("Internal Server Error!");
 });
 
-app.post("/deadlines/addUser", async (req, res) => {
+app.post("/deadline/addUser", async (req, res) => {
   if(!req.body.userID || !req.body.deadlineID){
     res.status(400).send("Invalid Details!");
     return;
