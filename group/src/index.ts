@@ -20,14 +20,14 @@ async function connectDB(): Promise<MongoClient> {
   await mongo.connect();
   return await Promise.resolve(mongo);
 }
-app.get("/groups/all", async (req, res) => {
+app.get("/group/all", async (req, res) => {
   const mongo = await connectDB();
   const groups = mongo.db("groups").collection('groups');
   const allGroups = await groups.find({}).toArray();
   res.send(allGroups);
 });
 
-app.get("/groups/:id", async (req, res) => {
+app.get("/group/:id", async (req, res) => {
   const mongo = await connectDB();
   const groups = mongo.db("groups").collection('groups');
   const group = await groups.findOne({_id: req.params.id});
