@@ -6,6 +6,7 @@ import bcrypt, { hash } from "bcrypt";
 import axios from "axios";
 import fs from "fs";
 import { MongoClient, ObjectId } from "mongodb";
+import cors from "cors";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); 
 app.use(cookieParser());
 app.use(session({secret: "Your secret key"}));
+app.use(cors());
 
 type userData = {
     firstName: string,
@@ -21,7 +23,7 @@ type userData = {
     password: string
 }
 
-type UserDataWId = userData & {id: ObjectId};
+type UserDataWId = userData & {userID: ObjectId};
 
 
 async function connectDB(): Promise<MongoClient> {
@@ -68,9 +70,11 @@ app.post("/auth/signup", async (req : Request, res : Response) => {
 
     const id = await addUser(mongo, newUser);
 
-    const user : UserDataWId = {...newUser, id};
+    const user : UserDataWId = {...newUser, userID : id};
 
-    await axios.post("http://users:4001/users/events", {
+    console.log(user)
+
+    await axios.post("http://localhost:4001/users/events", {
         type: "UserCreated",
         data: user
     });
@@ -101,9 +105,9 @@ app.post("/auth/login", async (req : Request, res: Response) => {
         return;
     }
 
-    console.log(user);
+    console.log({userID: user._id, message: "Logged in!"})
 
-    res.send("Logged in!");
+    res.json({userID: user._id, message: "Logged in!"});
 })
 
 app.post("/auth/events", async (req : Request, res: Response) => {

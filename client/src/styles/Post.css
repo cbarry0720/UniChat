@@ -1,0 +1,11 @@
+.post-container{
+    width: 18rem;
+    margin: 10px;
+    /* make this scrollable */
+}
+.post-text{
+}
+.user{
+    border-top: black 1px solid;
+    text-align: right;
+}

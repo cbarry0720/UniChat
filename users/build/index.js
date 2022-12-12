@@ -42,8 +42,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var mongodb_1 = require("mongodb");
 var body_parser_1 = __importDefault(require("body-parser"));
+var cors_1 = __importDefault(require("cors"));
 var app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
+app.use((0, cors_1.default)());
 function connectDB() {
     return __awaiter(this, void 0, void 0, function () {
         var uri, mongo;
@@ -75,12 +77,25 @@ app.get("/users/all", function (req, res) { return __awaiter(void 0, void 0, voi
                 return [4 /*yield*/, users.find({}).toArray()];
             case 2:
                 allUsers = _a.sent();
-                res.send(allUsers);
+                res.send(allUsers.map(function (user) {
+                    return {
+                        userID: user.userID,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        tagName: user.tagName,
+                        posts: user.posts,
+                        comments: user.comments,
+                        upvotes: user.upvotes,
+                        downvotes: user.downvotes,
+                        courses: user.courses,
+                        deadlines: user.deadlines
+                    };
+                }));
                 return [2 /*return*/];
         }
     });
 }); });
-app.get("/users/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+app.get("/users/:userID", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var mongo, users, user;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -88,14 +103,26 @@ app.get("/users/:id", function (req, res) { return __awaiter(void 0, void 0, voi
             case 1:
                 mongo = _a.sent();
                 users = mongo.db("users").collection('users');
-                return [4 /*yield*/, users.findOne({ _id: req.params.id })];
+                console.log(req.params.userID);
+                return [4 /*yield*/, users.findOne({ userID: req.params.userID })];
             case 2:
                 user = _a.sent();
                 if (!user) {
                     res.status(404).send("User Not Found!");
                     return [2 /*return*/];
                 }
-                res.send(user);
+                res.send({
+                    userID: user.userID,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    tagName: user.tagName,
+                    posts: user.posts,
+                    comments: user.comments,
+                    upvotes: user.upvotes,
+                    downvotes: user.downvotes,
+                    courses: user.courses,
+                    deadlines: user.deadlines
+                });
                 return [2 /*return*/];
         }
     });
@@ -109,6 +136,7 @@ app.post("/users/events", function (req, res) { return __awaiter(void 0, void 0,
                     res.status(400).send("Invalid Details!");
                     return [2 /*return*/];
                 }
+                console.log(req.body);
                 _a = req.body, type = _a.type, data = _a.data;
                 if (!(type === "UserCreated")) return [3 /*break*/, 3];
                 return [4 /*yield*/, connectDB()];
@@ -116,7 +144,7 @@ app.post("/users/events", function (req, res) { return __awaiter(void 0, void 0,
                 mongo = _b.sent();
                 users = mongo.db("users").collection('users');
                 reformattedData = {
-                    _id: data._id,
+                    userID: data._id,
                     firstName: data.firstName,
                     lastName: data.lastName,
                     tagName: data.tagName,
@@ -143,11 +171,11 @@ app.post("/users/events", function (req, res) { return __awaiter(void 0, void 0,
             case 4:
                 mongo = _b.sent();
                 users = mongo.db("users").collection('users');
-                return [4 /*yield*/, users.findOne({ _id: data.userID })];
+                return [4 /*yield*/, users.findOne({ userID: data.userID })];
             case 5:
                 user = _b.sent();
                 if (!user) return [3 /*break*/, 7];
-                return [4 /*yield*/, users.updateOne({ _id: data.userID }, { $push: { posts: data.postID } })];
+                return [4 /*yield*/, users.updateOne({ userID: data.userID }, { $push: { posts: data.postID } })];
             case 6:
                 updatedUser = _b.sent();
                 if (updatedUser) {

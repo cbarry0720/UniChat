@@ -1,9 +1,12 @@
 import express from "express";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import bodyParser from "body-parser";
+import axios from "axios";
+import cors from "cors";
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 async function connectDB(): Promise<MongoClient> {
     const uri = process.env.DATABASE_URL || 'mongodb://localhost:27017';
@@ -27,7 +30,8 @@ app.get("/posts/all", async (req, res) => {
 app.get("/posts/:id", async (req, res) => {
     const mongo = await connectDB();
     const posts = mongo.db("posts").collection('posts');
-    const post = await posts.findOne({_id: req.params.id});
+    const id = new ObjectId(req.params.id);
+    const post = await posts.findOne({_id: id});
     if(!post){
         res.status(404).send("Post Not Found!");
         return;
@@ -52,6 +56,19 @@ app.post("/posts/create", async (req, res) => {
         postComments: []
     });
     if(id){
+        await axios.post("http://localhost:4001/users/events", {
+            type: "PostCreated",
+            data: {
+                postID: id.insertedId,
+                userID: userID,
+                postText: postText,
+                postMedia: postMedia,
+                postUpvotes: [],
+                postDownvotes: [],
+                postComments: []
+            }
+        });
+
         res.status(201).send({
             postID: id.insertedId,
             userID: userID,
@@ -63,10 +80,12 @@ app.post("/posts/create", async (req, res) => {
         });
         return;
     }
+
     res.status(500).send("Internal Server Error!");
 });
 
 app.post("/posts/events", async (req, res) => {
+
     if(!req.body.type || !req.body.data){
         res.status(400).send("Invalid Details!");
         return;

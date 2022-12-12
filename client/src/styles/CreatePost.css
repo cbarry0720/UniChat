@@ -1,0 +1,13 @@
+.create-post-container {
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.url-input{
+    width: 100%;
+    margin: 10px;
+}

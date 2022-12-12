@@ -57,11 +57,13 @@ var express_session_1 = __importDefault(require("express-session"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var axios_1 = __importDefault(require("axios"));
 var mongodb_1 = require("mongodb");
+var cors_1 = __importDefault(require("cors"));
 var app = (0, express_1.default)();
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 app.use((0, express_session_1.default)({ secret: "Your secret key" }));
+app.use((0, cors_1.default)());
 function connectDB() {
     return __awaiter(this, void 0, void 0, function () {
         var uri, mongo;
@@ -138,7 +140,8 @@ app.post("/auth/signup", function (req, res) { return __awaiter(void 0, void 0, 
                 return [4 /*yield*/, addUser(mongo, newUser)];
             case 4:
                 id = _b.sent();
-                user = __assign(__assign({}, newUser), { id: id });
+                user = __assign(__assign({}, newUser), { userID: id });
+                console.log(user);
                 return [4 /*yield*/, axios_1.default.post("http://localhost:4001/users/events", {
                         type: "UserCreated",
                         data: user
@@ -177,8 +180,8 @@ app.post("/auth/login", function (req, res) { return __awaiter(void 0, void 0, v
                     res.status(400).send("Invalid password!");
                     return [2 /*return*/];
                 }
-                console.log(user);
-                res.send("Logged in!");
+                console.log({ userID: user._id, message: "Logged in!" });
+                res.json({ userID: user._id, message: "Logged in!" });
                 return [2 /*return*/];
         }
     });

@@ -1,9 +1,11 @@
 import express from "express";
 import { MongoClient } from "mongodb";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 async function connectDB(): Promise<MongoClient> {
     const uri = process.env.DATABASE_URL || 'mongodb://localhost:27017';
@@ -23,7 +25,7 @@ app.get("/users/all", async (req, res) => {
     const allUsers = await users.find({}).toArray();
     res.send(allUsers.map(user => {
         return {
-            userID: user._id,
+            userID: user.userID,
             firstName: user.firstName,
             lastName: user.lastName,
             tagName: user.tagName,
@@ -36,16 +38,17 @@ app.get("/users/all", async (req, res) => {
             }}));
 });
 
-app.get("/users/:id", async (req, res) => {
+app.get("/users/:userID", async (req, res) => {
     const mongo = await connectDB();
     const users = mongo.db("users").collection('users');
-    const user = await users.findOne({_id: req.params.id});
+    console.log(req.params.userID)
+    const user = await users.findOne({userID: req.params.userID});
     if(!user){
         res.status(404).send("User Not Found!");
         return;
     }
     res.send({
-        userID: user._id,
+        userID: user.userID,
         firstName: user.firstName,
         lastName: user.lastName,
         tagName: user.tagName,
@@ -63,12 +66,13 @@ app.post("/users/events", async (req, res) => {
         res.status(400).send("Invalid Details!");
         return;
     }
+    console.log(req.body)
     const {type, data} = req.body;
     if(type === "UserCreated"){
         const mongo = await connectDB();
         const users = mongo.db("users").collection('users');
         const reformattedData = {
-            _id: data._id,
+            userID: data._id,
             firstName: data.firstName,
             lastName: data.lastName,
             tagName: data.tagName,
@@ -88,9 +92,9 @@ app.post("/users/events", async (req, res) => {
     }else if(type === "PostCreated"){
         const mongo = await connectDB();
         const users = mongo.db("users").collection('users');
-        const user = await users.findOne({_id: data.userID});
+        const user = await users.findOne({userID: data.userID});
         if(user){
-            const updatedUser = await users.updateOne({_id: data.userID}, {$push: {posts: data.postID}});
+            const updatedUser = await users.updateOne({userID: data.userID}, {$push: {posts: data.postID}});
             if(updatedUser){
                 res.send("Post Created!");
             }else{
