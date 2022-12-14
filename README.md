@@ -18,11 +18,12 @@
 3. [Posts](posts/README.md)
 
 ### Anshul
-1. Comments
-2. Query
-3. Moderation
+1. [Comments](comments/README.md)
+2. [Query](query/README.md)
+3. [Moderation](moderation/README.md)
+4. [Notifications](notifications/README.md)
 
 ### Ibrahim
-1. Voting
-2. Deadline
-3. Group
+1. [Voting](voting/README.md)
+2. [Deadline](deadline/README.md)
+3. [Group](group/README.md)
