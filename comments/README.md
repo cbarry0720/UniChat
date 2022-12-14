@@ -6,10 +6,10 @@
 ```json
 [
 	{
-		"commentID" : string,
-		"userID" : string,
-		"postID" : string,
-		"content" : string
+		"commentID" : "string",
+		"userID" : "string",
+		"postID" : "string",
+		"content" : "string"
 	}
 ]
 ```
@@ -21,9 +21,9 @@
 ### Create a new comment. Required parameters:
 ```json
 {
-	"postID" : string,
-	"userID" : string,
-	"content" : string
+	"postID" : "string",
+	"userID" : "string",
+	"content" : "string"
 }
 ```
 
@@ -32,21 +32,21 @@
 ### `Status 200` : Comment successfully created
 ```json
 {
-	"commentID" : string,
-	"postID" : string,
-	"userID" : string,
-	"content" : string
+	"commentID" : "string",
+	"postID" : "string",
+	"userID" : "string",
+	"content" : "string"
 }
 ```
 
 ### `Status 400` : Missing body parameters 
 ```json
 {
-	error: 'Body missing parameters.',
-	expected: {
-		"userID" : string,
-		"postID" : string,
-		"content" : string
+	"error": "Body missing parameters.",
+	"expected": {
+		"userID" : "string",
+		"postID" : "string",
+		"content" : "string"
 	}
 }
 ```
@@ -56,7 +56,7 @@
 ### Gets all comments by postID. Required parameters:
 ```json
 {
-	"postID" : string
+	"postID" : "string"
 }
 ```
 
@@ -66,16 +66,16 @@
 ```json
 [
 	{
-		"commentID" : string,
-		"postID" : string,
-		"userID" : string,
-		"content" : string
+		"commentID" : "string",
+		"postID" : "string",
+		"userID" : "string",
+		"content" : "string"
 	},
 	{
-		"commentID" : string,
-		"postID" : string,
-		"userID" : string,
-		"content" : string
+		"commentID" : "string",
+		"postID" : "string",
+		"userID" : "string",
+		"content" : "string"
 	}
 ]
 ```
@@ -83,9 +83,9 @@
 ### `Status 400` : Missing body parameters
 ```json
 {
-	error: 'Body missing parameters.',
-	expected: {
-		"postID" : string
+	"error": "Body missing parameters.",
+	"expected": {
+		"postID" : "string"
 	}
 }
 ```
