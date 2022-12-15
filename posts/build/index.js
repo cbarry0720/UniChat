@@ -105,21 +105,22 @@ app.get("/posts/:id", function (req, res) { return __awaiter(void 0, void 0, voi
     });
 }); });
 app.post("/posts/create", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, userID, postText, postMedia, mongo, posts, id;
+    var _a, userID, postText, postMedia, groupID, mongo, posts, id, post;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                if (!req.body.userID || !req.body.postText || !req.body.postMedia) {
+                if (!req.body.userID || !req.body.postText || !req.body.postMedia || !req.body.groupID) {
                     res.status(400).send("Invalid Details!");
                     return [2 /*return*/];
                 }
-                _a = req.body, userID = _a.userID, postText = _a.postText, postMedia = _a.postMedia;
+                _a = req.body, userID = _a.userID, postText = _a.postText, postMedia = _a.postMedia, groupID = _a.groupID;
                 return [4 /*yield*/, connectDB()];
             case 1:
                 mongo = _b.sent();
                 posts = mongo.db("posts").collection('posts');
                 return [4 /*yield*/, posts.insertOne({
                         userID: userID,
+                        groupID: groupID,
                         postText: postText,
                         postMedia: postMedia,
                         postUpvotes: [],
@@ -128,30 +129,24 @@ app.post("/posts/create", function (req, res) { return __awaiter(void 0, void 0,
                     })];
             case 2:
                 id = _b.sent();
-                if (!id) return [3 /*break*/, 4];
-                return [4 /*yield*/, axios_1.default.post("http://localhost:4001/users/events", {
-                        type: "PostCreated",
-                        data: {
-                            postID: id.insertedId,
-                            userID: userID,
-                            postText: postText,
-                            postMedia: postMedia,
-                            postUpvotes: [],
-                            postDownvotes: [],
-                            postComments: []
-                        }
-                    })];
-            case 3:
-                _b.sent();
-                res.status(201).send({
+                post = {
                     postID: id.insertedId,
                     userID: userID,
+                    groupID: groupID,
                     postText: postText,
                     postMedia: postMedia,
                     postUpvotes: [],
                     postDownvotes: [],
                     postComments: []
-                });
+                };
+                if (!id) return [3 /*break*/, 4];
+                return [4 /*yield*/, axios_1.default.post("http://localhost:4010/events", {
+                        type: "PostCreated",
+                        data: post
+                    })];
+            case 3:
+                _b.sent();
+                res.status(201).send({ post: post });
                 return [2 /*return*/];
             case 4:
                 res.status(500).send("Internal Server Error!");

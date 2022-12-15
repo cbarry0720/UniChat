@@ -32,7 +32,9 @@ app.post('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                     "groupID": "string",
                     "postText": "string",
                     "postMedia": "string",
-                    "postComments": []
+                    "postComments": [],
+                    "postUpvotes": [],
+                    "postDownvotes": []
                 }
             });
             return;
@@ -44,6 +46,8 @@ app.post('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             postText: moderateMessage(postText),
             postMedia: postMedia,
             postComments: postComments,
+            postUpvotes: [],
+            postDownvotes: []
         };
         yield axios.post('http://localhost:4010/events', {
             type: 'PostModerated',

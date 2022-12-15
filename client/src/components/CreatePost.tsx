@@ -57,8 +57,11 @@ export default function CreatePost({user, reloadPosts} : {user: UserType, reload
 
     const createPost = (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        axios.post("http://localhost:4002/posts/create", postData)
-        reloadPosts();
+        axios.post("http://localhost:4002/posts/create", postData).then(() => {
+            setTimeout(() => {
+                reloadPosts();
+            }, 500);
+        })
     }
 
     return (
