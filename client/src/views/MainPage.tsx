@@ -80,8 +80,8 @@ export default function MainPage({user} : {user: User}) {
                         return <Post key={post.postID} post={post} />
                     })}
                 </div>
-                <CreatePost user={user}/>
+                <CreatePost setPosts={setPosts} posts={posts} user={user}/>
             </div>
         </div>
     );
-    }
+}

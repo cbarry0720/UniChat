@@ -3,14 +3,29 @@ import axios from "axios";
 import { useState } from "react";
 import "../styles/CreatePost.css";
 
+type Comment = {
+    commentID : string,
+	postID : string,
+    userID : string,
+	content : string
+}
+
+type Vote = {
+    voteID : string,
+    voter : string,
+    postID : string,
+    voteType : string
+}
+
 type PostType = {
+    postID: string,
     userID: string,
     groupID: string,
     postText: string,
     postMedia: string,
-    postUpvotes: [],
-    postDownvotes: [],
-    postComments: []
+    postUpvotes: Vote[],
+    postDownvotes: Vote[],
+    postComments: Comment[]
 }
 
 type UserType = {
@@ -27,9 +42,10 @@ type UserType = {
     deadlines: string[]
 }
 
-export default function CreatePost({user} : {user: UserType}) {
+export default function CreatePost({user, posts, setPosts} : {user: UserType, posts: PostType[], setPosts: react.Dispatch<react.SetStateAction<PostType[]>>}) {
 
     const [postData, setPostData] = useState<PostType>({
+        postID: "",
         userID: "",
         groupID: "123",
         postText: "",
@@ -42,6 +58,7 @@ export default function CreatePost({user} : {user: UserType}) {
     const createPost = (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         axios.post("http://localhost:4002/posts/create", postData);
+        setPosts([...posts, postData]);
     }
 
     return (
@@ -52,6 +69,7 @@ export default function CreatePost({user} : {user: UserType}) {
                     <label>Enter Text Here:</label>
                     <textarea className="post-text form-control" placeholder="What's on your mind?" onChange={(e) => {
                         setPostData({
+                            postID: postData.postID,
                             userID: user.userID,
                             groupID: postData.groupID,
                             postText: e.target.value,
@@ -66,6 +84,7 @@ export default function CreatePost({user} : {user: UserType}) {
                     <label>Attach Media URL:</label>
                     <input className="url-input" type="url" onChange={(e) => {
                         setPostData({
+                            postID: postData.postID,
                             userID: user.userID,
                             postText: postData.postText,
                             groupID: postData.groupID,
