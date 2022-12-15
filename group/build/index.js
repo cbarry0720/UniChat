@@ -147,7 +147,8 @@ app.post("/group/create", function (req, res) { return __awaiter(void 0, void 0,
             case 2:
                 id = _b.sent();
                 if (!id) return [3 /*break*/, 4];
-                return [4 /*yield*/, axios_1.default.post('http://eventbus:4010/events', {
+
+                return [4 /*yield*/, axios_1.default.post('http://localhost:4010/events', {
                         type: 'GroupCreated',
                         data: {
                             groupID: id.insertedId,
@@ -194,7 +195,9 @@ app.post("/group/addUser", function (req, res) { return __awaiter(void 0, void 0
             case 4:
                 userAddedToGroup = _a.sent();
                 if (!userAddedToGroup) return [3 /*break*/, 6];
-                return [4 /*yield*/, axios_1.default.post('http://eventbus:4010/events', {
+
+                return [4 /*yield*/, axios_1.default.post('http://localhost:4010/events', {
+
                         type: 'UserAddedToGroup',
                         data: {
                             userID: userID,

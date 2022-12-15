@@ -3,6 +3,10 @@ import CreatePost from "../components/CreatePost";
 import Post from "../components/Post";
 import "../styles/MainPage.css"
 import axios from "axios";
+import CreateDeadline from '../components/CreateDeadline';
+import Deadline  from '../components/Deadline';
+import CreateGroup from "../components/CreateGroup";
+import Group from "../components/Group";
 
 type User = {
     userID : string,
@@ -42,6 +46,21 @@ type PostType = {
     postDownvotes: Vote[],
     postComments: Comment[]
 }
+
+
+type DeadlineType = {
+    deadlineID: string,
+    deadlineUsers: string[],
+    deadlineName: string,
+    deadlineTime: string,
+}
+
+type GroupType = {
+    groupID: string,
+    groupUsers: string[],
+    groupName: string,
+}
+  
 
 type Filter = {
     filter: string,
@@ -98,6 +117,10 @@ export default function MainPage({user} : {user: User}) {
 
     useEffect(loadPostsByFilter, [filter]);
 
+    const [deadlines, setDeadlines] = React.useState<DeadlineType[]>([]);
+    const [groups, setGroups] = React.useState<GroupType[]>([]);
+
+
     return (
         <div>
             <h1>UniChat</h1>
@@ -108,6 +131,22 @@ export default function MainPage({user} : {user: User}) {
                     })}
                 </div>
                 <CreatePost reloadPosts={loadPostsByFilter} user={user}/>
+            </div>
+            <div className = "deadline-container">
+                <CreateDeadline setDeadlines={setDeadlines} deadlines={deadlines} user={user}/>
+                <div className="posts-container">
+                    {deadlines.map((deadline) => {
+                        return <Deadline key={deadline.deadlineID} deadline={deadline} />
+                    })}
+                </div>
+            </div>
+            <div className = "deadline-container">
+                <CreateGroup setGroups={setGroups} groups={groups} user={user}/>
+                <div className="posts-container">
+                    {groups.map((group) => {
+                        return <Group key={group.groupID} group={group} user = {user} />
+                    })}
+                </div>
             </div>
         </div>
     );
