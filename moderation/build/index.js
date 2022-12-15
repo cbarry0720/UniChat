@@ -1,41 +1,27 @@
-import express, { Express, Request, Response } from 'express';
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import express from 'express';
 import logger from 'morgan';
-import { randomBytes } from 'crypto';
 import cors from 'cors';
-import axios, { AxiosError } from 'axios';
-
-// TYPES
-
-type Post = {
-    postID: string,
-    userID: string,
-    groupID: string,
-    postText: string,
-    postMedia: string,
-    postComments: Comment[]
-}
-
-type Comment = {
-    commentID : string,
-	postID : string,
-    userID : string,
-	content : string
-}
-
-const app: Express = express();
-
+import axios from 'axios';
+const app = express();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(cors());
-
-app.post('/events', async (req: Request, res: Response) => {
+app.post('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { type, data } = req.body;
-
     if (type === 'PostCreated') {
-        const post : Post = data;
-        const content : string = post.postText;
+        const post = data;
+        const content = post.postText;
         if (moderateMessage(content)) {
-            await axios.post('http://localhost:4010/events', {
+            yield axios.post('http://localhost:4005/events', {
                 type: 'PostModerated',
                 data: {
                     postID: post.postID,
@@ -45,10 +31,10 @@ app.post('/events', async (req: Request, res: Response) => {
                     postMedia: post.postMedia,
                     postComments: post.postComments,
                 }
-            })
+            });
         }
         else {
-            await axios.post('http://localhost:4010/events', {
+            yield axios.post('http://localhost:4005/events', {
                 type: 'PostModerated',
                 data: {
                     post: {
@@ -60,15 +46,14 @@ app.post('/events', async (req: Request, res: Response) => {
                         postComments: post.postComments,
                     }
                 }
-            })
+            });
         }
     }
-
     if (type === 'CommentCreated') {
-        const comment : Comment  = data;
-        const content : string = comment.content;
+        const comment = data;
+        const content = comment.content;
         if (moderateMessage(content)) {
-            await axios.post('http://localhost:4010/events', {
+            yield axios.post('http://localhost:4005/events', {
                 type: 'CommentModerated',
                 data: {
                     comment: {
@@ -78,10 +63,10 @@ app.post('/events', async (req: Request, res: Response) => {
                         content: comment.content
                     }
                 }
-            })
+            });
         }
         else {
-            await axios.post('http://localhost:4010/events', {
+            yield axios.post('http://localhost:4005/events', {
                 type: 'CommentModerated',
                 data: {
                     comment: {
@@ -91,22 +76,15 @@ app.post('/events', async (req: Request, res: Response) => {
                         content: 'This comment has been removed due to offensive content'
                     }
                 }
-            })
+            });
         }
     }
-
     res.status(300).send({
-        message: 'Event not recognized', 
-        type: type, 
+        message: 'Event not recognized',
+        type: type,
         data: data
     });
-
-})
-
-app.listen(4003, () => {
-    console.log('Moderation service listening on port 4003');
-})
-
-const moderateMessage = (content: string) => {
+}));
+const moderateMessage = (content) => {
     return true;
-}
+};

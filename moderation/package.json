@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "nodemon index.js"
+    "start": "nodemon ./build/index.js",
+    "build": "tsc -p ."
   },
   "keywords": [],
   "author": "Anshul Vemulapalli",
