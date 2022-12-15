@@ -31,7 +31,7 @@ export default function CreatePost({user} : {user: UserType}) {
 
     const [postData, setPostData] = useState<PostType>({
         userID: "",
-        groupID: "",
+        groupID: "123",
         postText: "",
         postMedia: "",
         postUpvotes: [],
