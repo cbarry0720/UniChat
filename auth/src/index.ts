@@ -74,7 +74,7 @@ app.post("/auth/signup", async (req : Request, res : Response) => {
 
     console.log(user)
 
-    await axios.post("http://localhost:4001/users/events", {
+    await axios.post("http://localhost:4010/events", {
         type: "UserCreated",
         data: user
     });
