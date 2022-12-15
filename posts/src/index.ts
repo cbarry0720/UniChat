@@ -8,6 +8,17 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+type Post = {
+    postID: ObjectId,
+    userID: string,
+    groupID: string,
+    postText: string,
+    postMedia: string,
+    postUpvotes: [],
+    postDownvotes: [],
+    postComments: []
+}
+
 async function connectDB(): Promise<MongoClient> {
     const uri = process.env.DATABASE_URL || 'mongodb://localhost:27017';
 
@@ -40,44 +51,39 @@ app.get("/posts/:id", async (req, res) => {
 });
 
 app.post("/posts/create", async (req, res) => {
-    if(!req.body.userID || !req.body.postText || !req.body.postMedia){
+    if(!req.body.userID || !req.body.postText || !req.body.postMedia || !req.body.groupID){
         res.status(400).send("Invalid Details!");
         return;
     }
-    const {userID, postText, postMedia} = req.body;
+    const {userID, postText, postMedia, groupID} = req.body;
     const mongo = await connectDB();
     const posts = mongo.db("posts").collection('posts');
     const id = await posts.insertOne({
         userID: userID,
+        groupID: groupID,
         postText: postText,
         postMedia: postMedia,
         postUpvotes: [],
         postDownvotes: [],
         postComments: []
     });
+    const post : Post = {
+        postID: id.insertedId,
+        userID: userID,
+        groupID: groupID,
+        postText: postText,
+        postMedia: postMedia,
+        postUpvotes: [],
+        postDownvotes: [],
+        postComments: []
+    }
     if(id){
         await axios.post("http://localhost:4001/users/events", {
             type: "PostCreated",
-            data: {
-                postID: id.insertedId,
-                userID: userID,
-                postText: postText,
-                postMedia: postMedia,
-                postUpvotes: [],
-                postDownvotes: [],
-                postComments: []
-            }
+            data: post
         });
 
-        res.status(201).send({
-            postID: id.insertedId,
-            userID: userID,
-            postText: postText,
-            postMedia: postMedia,
-            postUpvotes: [],
-            postDownvotes: [],
-            postComments: []
-        });
+        res.status(201).send({post});
         return;
     }
 

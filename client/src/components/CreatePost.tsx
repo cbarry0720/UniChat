@@ -5,6 +5,7 @@ import "../styles/CreatePost.css";
 
 type PostType = {
     userID: string,
+    groupID: string,
     postText: string,
     postMedia: string,
     postUpvotes: [],
@@ -30,6 +31,7 @@ export default function CreatePost({user} : {user: UserType}) {
 
     const [postData, setPostData] = useState<PostType>({
         userID: "",
+        groupID: "",
         postText: "",
         postMedia: "",
         postUpvotes: [],
@@ -51,6 +53,7 @@ export default function CreatePost({user} : {user: UserType}) {
                     <textarea className="post-text form-control" placeholder="What's on your mind?" onChange={(e) => {
                         setPostData({
                             userID: user.userID,
+                            groupID: postData.groupID,
                             postText: e.target.value,
                             postMedia: postData.postMedia,
                             postUpvotes: postData.postUpvotes,
@@ -65,6 +68,7 @@ export default function CreatePost({user} : {user: UserType}) {
                         setPostData({
                             userID: user.userID,
                             postText: postData.postText,
+                            groupID: postData.groupID,
                             postMedia: e.target.value,
                             postUpvotes: postData.postUpvotes,
                             postDownvotes: postData.postDownvotes,
