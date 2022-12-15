@@ -46,8 +46,6 @@ export default function Post({userID, post} : {userID: string, post: PostType}) 
     const [postData, setPostData] = useState<PostType>(post);
     const [localVoteValue, setLocalVoteValue] = useState<number>(0);
 
-    console.log(postData)
-
     const onUpvote = async () => {
         if(localVoteValue === 1) {
             setPostData({...postData, postUpvotes: postData.postUpvotes.filter((vote, i) => postData.postUpvotes.length - 1 !== i)})

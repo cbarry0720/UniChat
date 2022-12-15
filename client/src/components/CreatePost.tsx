@@ -55,10 +55,10 @@ export default function CreatePost({user, posts, setPosts} : {user: UserType, po
         postComments: []
     });
 
-    const createPost = (e : React.FormEvent<HTMLFormElement>) => {
+    const createPost = async (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        axios.post("http://localhost:4002/posts/create", postData);
-        setPosts([...posts, postData]);
+        const post : PostType= (await axios.post("http://localhost:4002/posts/create", postData)).data.post;
+        setPosts([...posts, post]);
     }
 
     return (
