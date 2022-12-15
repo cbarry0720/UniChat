@@ -88,7 +88,7 @@
 
 ## GET : `/posts/group/:id`
 
-### Get all posts by group. Required parameters:
+### Get all posts by group. Required query parameters:
 ```json
 {
     "groupID" : "string"
@@ -134,10 +134,10 @@
 ]
 ```
 
-### `Status 400` : Body missing parameters
+### `Status 400` : Query missing parameters
 ```json
 {
-    "error" : "Body missing parameters",
+    "error" : "Query missing parameters",
     "expected" : {
         "groupID" : "string"
     }
@@ -192,10 +192,10 @@
 ]
 ```
 
-### `Status 400` : Body missing parameters
+### `Status 400` : Query missing parameters
 ```json
 {
-    "error" : "Body missing parameters",
+    "error" : "Query missing parameters",
     "expected" : {
         "userID" : "string"
     }
@@ -213,7 +213,10 @@
 ```
 ### Acceptable Events:
 ```
-
+"PostModerated"
+"CommentModerated"
+"PostUpvoted"
+"PostDownvoted"
 ```
 
 ## Responses:

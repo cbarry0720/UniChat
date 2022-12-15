@@ -47,9 +47,15 @@ app.get('/posts/all', async (req: Request, res: Response) => {
     res.status(200).send(posts);
 });
 
-app.get('/posts/group/:id', async (req: Request, res: Response) => {
+interface Query {
+    groupID? : string,
+    userID? : string
+}
+
+app.get('/posts/group/:id', async (req: Request<{}, {}, {}, Query>, res: Response) => {
     // Handling Bad Request
-    const { groupID } : {groupID : string} = req.body;
+    const { query } = req;
+    const groupID = query.groupID;
     const params : any[] = [groupID];
     if (params.some((param, index) => (!param || param.trim() === ''))) {
         res.status(400).send({
@@ -73,7 +79,8 @@ app.get('/posts/group/:id', async (req: Request, res: Response) => {
 
 app.get('/posts/user/:id', async (req: Request, res: Response) => {
     // Handling Bad Request
-    const { userID } : {userID : string} = req.body;
+    const { query } = req;
+    const userID = query.userID;
     const params : any[] = [userID];
     if (params.some((param, index) => (!param || param.trim() === ''))) {
         res.status(400).send({
