@@ -8,7 +8,7 @@ type Props = {
     userID: string,
 }
 
-export default function CreateComment({postID, userID} : Props) {
+export default function CommentCreate({postID, userID} : Props) {
 
     const [commentText, setCommentText] = useState<string>("");
 
