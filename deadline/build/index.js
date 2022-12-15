@@ -149,7 +149,7 @@ app.post("/deadline/create", function (req, res) { return __awaiter(void 0, void
                 id = _b.sent();
                 if (!id) return [3 /*break*/, 4];
                 return [4 /*yield*/, axios_1.default.post('http://eventbus:4010/events', {
-                        type: 'deadlineCreated',
+                        type: 'DeadlineCreated',
                         data: {
                             deadlineID: id.insertedId,
                             deadlineUsers: [userID],
@@ -198,7 +198,7 @@ app.post("/deadline/addUser", function (req, res) { return __awaiter(void 0, voi
                 subscribedToDeadline = _a.sent();
                 if (!subscribedToDeadline) return [3 /*break*/, 6];
                 return [4 /*yield*/, axios_1.default.post('http://eventbus:4010/events', {
-                        type: 'deadlineCreated',
+                        type: 'UserAdded',
                         data: {
                             userID: userID,
                             deadlineID: deadlineID

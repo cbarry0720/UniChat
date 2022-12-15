@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import express, { Request, Response } from 'express';
 import { MongoClient, ObjectId } from "mongodb";
 import * as bodyParser from "body-parser";
-import * as axios from 'axios';
+import axios from 'axios';
 import cors from 'cors';
 
 const app = express();
@@ -51,6 +51,14 @@ app.post("/group/create", async (req, res) => {
       groupName: groupName,
     });
     if(id){
+      await axios.post('http://eventbus:4010/events', {
+        type: 'GroupCreated',
+        data: {
+          groupID: id.insertedId,
+          groupUsers: [userID],
+          groupName: groupName,
+        },
+      });
         res.status(201).send({
             groupID: id.insertedId,
             groupUsers: [userID],
@@ -78,6 +86,13 @@ app.post("/group/create", async (req, res) => {
     else{
       const userAddedToGroup = await groups.updateOne({_id: groupID}, {$push: {groupUsers: userID}});
           if(userAddedToGroup){
+            await axios.post('http://eventbus:4010/events', {
+              type: 'UserAddedToGroup',
+              data: {
+                userID,
+                groupID
+              },
+            });
               res.status(200).send("User added to group");
               return;
           }

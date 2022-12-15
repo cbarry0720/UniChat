@@ -52,7 +52,7 @@ app.post("/deadline/create", async (req, res) => {
   });
   if(id){
     await axios.post('http://eventbus:4010/events', {
-      type: 'deadlineCreated',
+      type: 'DeadlineCreated',
       data: {
         deadlineID: id.insertedId,
         deadlineUsers: [userID],
@@ -89,7 +89,7 @@ app.post("/deadline/addUser", async (req, res) => {
     const subscribedToDeadline = await deadlines.updateOne({_id: deadlineID}, {$push: {deadlineUsers: userID}});
         if(subscribedToDeadline){
           await axios.post('http://eventbus:4010/events', {
-            type: 'deadlineCreated',
+            type: 'UserAdded',
             data: {
               userID,
               deadlineID
@@ -103,8 +103,6 @@ app.post("/deadline/addUser", async (req, res) => {
   }
 
 });
-
-
 
 app.listen(4007, () => {
   console.log(`Running on ${4007}.`);
