@@ -46,7 +46,7 @@ app.post('/comments/create', (req, res) => __awaiter(void 0, void 0, void 0, fun
     // Call Event bus
     yield axios.post("http://localhost:4010/events", {
         type: "CommentCreated",
-        data: commentID
+        data: comment
     }).catch((error) => {
         if (error) {
             console.log(error);
