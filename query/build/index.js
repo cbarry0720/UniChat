@@ -23,7 +23,8 @@ app.get('/posts/all', (req, res) => __awaiter(void 0, void 0, void 0, function* 
 }));
 app.get('/posts/group/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Handling Bad Request
-    const { groupID } = req.body;
+    const { query } = req;
+    const groupID = query.groupID;
     const params = [groupID];
     if (params.some((param, index) => (!param || param.trim() === ''))) {
         res.status(400).send({
@@ -42,7 +43,8 @@ app.get('/posts/group/:id', (req, res) => __awaiter(void 0, void 0, void 0, func
 }));
 app.get('/posts/user/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Handling Bad Request
-    const { userID } = req.body;
+    const { query } = req;
+    const userID = query.userID;
     const params = [userID];
     if (params.some((param, index) => (!param || param.trim() === ''))) {
         res.status(400).send({
