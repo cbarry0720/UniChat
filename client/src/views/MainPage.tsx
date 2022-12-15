@@ -55,7 +55,9 @@ export default function MainPage({user} : {user: User}) {
 
     const loadPostsByUser = (userID : string) => {
         return () => {
-            axios.get("http://localhost:4004/posts/user" + userID).then((res) => {
+            axios.get("http://localhost:4004/posts/user/:id", {params: {
+                userID: userID
+            }}).then((res) => {
                 setPosts(res.data)
             })
         }
@@ -63,7 +65,11 @@ export default function MainPage({user} : {user: User}) {
 
     const loadPostsByGroup = (groupID : string) => {
         return () => {
-            axios.get("http://localhost:4004/posts/group" + groupID).then((res) => {
+            axios.get("http://localhost:4004/posts/group/:id", {
+                params: {
+                    groupID: groupID
+                }
+            }).then((res) => {
                 setPosts(res.data)
             })
         }
