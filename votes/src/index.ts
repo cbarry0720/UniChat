@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import express, { Request, Response } from 'express';
 import { MongoClient, ObjectId } from "mongodb";
 import * as bodyParser from "body-parser";
-import * as axios from 'axios';
+import axios from 'axios';
 import cors from 'cors';
 
 const app = express();
@@ -53,6 +53,15 @@ app.post("/votes/create", async (req, res) => {
     voteType: voteType,
   });
   if(id){
+    await axios.post('http://eventbus:4010/events', {
+      type: 'VoteCreated',
+      data: {
+        voteID: id.insertedId,
+        voter: userID,
+        postID: postID,
+        voteType: voteType,
+      },
+    });
       res.status(201).send({
           voteID: id.insertedId,
           voter: userID,
