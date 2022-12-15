@@ -92,6 +92,6 @@ app.get('/comments/:id', async (req: Request, res: Response) => {
 })
 
 
-app.listen(4001, () => {
-    console.log('Listening on port 4001');
+app.listen(4003, () => {
+    console.log('Listening on port 4003');
 });
