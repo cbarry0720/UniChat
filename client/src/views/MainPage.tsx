@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CreatePost from "../components/CreatePost";
 import Post from "../components/Post";
 import "../styles/MainPage.css"
@@ -47,6 +47,7 @@ type PostType = {
     postComments: Comment[]
 }
 
+
 type DeadlineType = {
     deadlineID: string,
     deadlineUsers: string[],
@@ -60,9 +61,19 @@ type GroupType = {
     groupName: string,
 }
   
+
+type Filter = {
+    filter: string,
+    id: string
+}
+
 export default function MainPage({user} : {user: User}) {
 
-    const [posts, setPosts] = React.useState<PostType[]>([]);
+    const [posts, setPosts] = useState<PostType[]>([]);
+    const [filter, setFilter] = useState<Filter>({
+        filter: "user",
+        id: user.userID
+    });
 
     const loadAllPosts = () => {
         axios.get("http://localhost:4004/posts/all").then((res) => {
@@ -92,7 +103,19 @@ export default function MainPage({user} : {user: User}) {
         }
     }
 
-    useEffect(loadAllPosts, [])
+    const loadPostsByFilter = () => {
+        console.log("here")
+        console.log(filter)
+        if (filter.filter === "user") {
+            loadPostsByUser(filter.id)();
+        } else if (filter.filter === "group") {
+            loadPostsByGroup(filter.id)();
+        } else{
+            loadAllPosts()
+        }
+    }
+
+    useEffect(loadPostsByFilter, [filter]);
 
     const [deadlines, setDeadlines] = React.useState<DeadlineType[]>([]);
     const [groups, setGroups] = React.useState<GroupType[]>([]);
@@ -104,10 +127,10 @@ export default function MainPage({user} : {user: User}) {
             <div className="main-page">
                 <div className="posts-container">
                     {posts.map((post) => {
-                        return <Post key={post.postID} post={post} />
+                        return <Post key={post.postID} userID = {user.userID} post={post} />
                     })}
                 </div>
-                <CreatePost setPosts={setPosts} posts={posts} user={user}/>
+                <CreatePost reloadPosts={loadPostsByFilter} user={user}/>
             </div>
             <div className = "deadline-container">
                 <CreateDeadline setDeadlines={setDeadlines} deadlines={deadlines} user={user}/>

@@ -52,7 +52,7 @@ app.post('/comments/create', async (req: Request, res: Response) => {
     // Call Event bus
     await axios.post("http://localhost:4010/events", {
         type: "CommentCreated",
-        data: commentID
+        data: comment
     }).catch((error: AxiosError | Error) => {
         if (error) {
             console.log(error);

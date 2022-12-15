@@ -13,7 +13,7 @@ There is no database for this service.
 ```json
 {
     "type" : "string",
-    "data" : {} // Can be of type Comment, Post
+    "data" : {} // Can be of type Comment, Post, etc.
 }
 ```
 

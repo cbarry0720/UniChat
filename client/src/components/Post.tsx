@@ -1,6 +1,8 @@
 import react, { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
+import CommentList from "./CommentList";
+import CommentCreate from "./CommentCreate";
 import "../styles/Post.css";
 
 type Comment = {
@@ -41,16 +43,39 @@ type UserType = {
     deadlines: []
 }
 
-export default function Post({post} : {post: PostType}) {
+export default function Post({userID, post} : {userID: string, post: PostType}) {
 
     const [postData, setPostData] = useState<PostType>(post);
+    const [localVoteValue, setLocalVoteValue] = useState<number>(0);
 
-    const onUpvote = () => {
-        setPostData({...postData, postUpvotes: [...postData.postUpvotes, {voteID: "1", voter: "1", postID: "1", voteType: "upvote"}]})
+    const onUpvote = async () => {
+        if(localVoteValue === 1) {
+            setPostData({...postData, postUpvotes: postData.postUpvotes.filter((vote, i) => postData.postUpvotes.length - 1 !== i)})
+            setLocalVoteValue(0)
+            return;
+        }
+        const voteData : Vote = await axios.post("http://localhost:4006/votes/create", {
+            userID,
+            postID: postData.postID,
+            voteType: "upvote"
+        })
+        setLocalVoteValue(localVoteValue + 1);
+        setPostData({...postData, postUpvotes: [...postData.postUpvotes, voteData]})
     }
 
-    const onDownvote = () => {
-        setPostData({...postData, postDownvotes: [...postData.postDownvotes, {voteID: "1", voter: "1", postID: "1", voteType: "downvote"}]})
+    const onDownvote = async () => {
+        if(localVoteValue === -1) {
+            setPostData({...postData, postDownvotes: postData.postDownvotes.filter((vote, i) => postData.postDownvotes.length - 1 !== i)})
+            setLocalVoteValue(0)
+            return;
+        }
+        const voteData : Vote = await axios.post("http://localhost:4006/votes/create", {
+            userID,
+            postID: postData.postID,
+            voteType: "downvote"
+        })
+        setLocalVoteValue(localVoteValue - 1);
+        setPostData({...postData, postDownvotes: [...postData.postDownvotes, voteData]})
     }
 
     return (
@@ -63,7 +88,10 @@ export default function Post({post} : {post: PostType}) {
                 <button onClick={onDownvote} className="btn btn-danger">&darr;</button>
                 <span>{postData.postUpvotes.length - postData.postDownvotes.length}</span>
             </div>
+            
             {/* Comments Here */}
+            <CommentList comments={postData.postComments}/>
+            <CommentCreate postID={postData.postID} userID={postData.userID}/>
             <h6 className="card-subtitle">Created by {postData.userID}</h6>
         </div>
     );
