@@ -87,28 +87,48 @@ app.post('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             return;
         }
     }
-    if (type === 'PostUpvoted') {
+    // if (type === 'PostUpvoted') {
+    //     const vote : Vote = data;
+    //     const post = getPost(vote.postID);
+    //     if (post) {
+    //         post.postUpvotes.push(vote);
+    //         updatePost(post);
+    //         res.status(200).send(post);
+    //         return;
+    //     } else {
+    //         res.status(404).send({
+    //             error: 'Post not found',
+    //             data: vote
+    //         });
+    //         return;
+    //     }
+    // }
+    // if (type === 'PostDownvoted') {
+    //     const vote : Vote = data;
+    //     const post = getPost(vote.postID);
+    //     if (post) {
+    //         post.postDownvotes.push(vote);
+    //         updatePost(post);
+    //         res.status(200).send(post);
+    //         return;
+    //     } else {
+    //         res.status(404).send({
+    //             error: 'Post not found',
+    //             data: vote
+    //         });
+    //         return;
+    //     }
+    // }
+    if (type === 'VoteCreated') {
         const vote = data;
         const post = getPost(vote.postID);
         if (post) {
-            post.postUpvotes.push(vote);
-            updatePost(post);
-            res.status(200).send(post);
-            return;
-        }
-        else {
-            res.status(404).send({
-                error: 'Post not found',
-                data: vote
-            });
-            return;
-        }
-    }
-    if (type === 'PostDownvoted') {
-        const vote = data;
-        const post = getPost(vote.postID);
-        if (post) {
-            post.postDownvotes.push(vote);
+            if (vote.voteType === 'upvote') {
+                post.postUpvotes.push(vote);
+            }
+            else {
+                post.postDownvotes.push(vote);
+            }
             updatePost(post);
             res.status(200).send(post);
             return;
