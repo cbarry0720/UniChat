@@ -7,6 +7,19 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+type User = {
+    userID: string,
+    firstName: string,
+    lastName: string,
+    tagName: string,
+    posts: [],
+    comments: [],
+    upvotes: [],
+    downvotes: [],
+    courses: [],
+    deadlines: []
+}
+
 async function connectDB(): Promise<MongoClient> {
     const uri = process.env.DATABASE_URL || 'mongodb://localhost:27017';
   
@@ -23,7 +36,7 @@ app.get("/users/all", async (req, res) => {
     const mongo = await connectDB();
     const users = mongo.db("users").collection('users');
     const allUsers = await users.find({}).toArray();
-    res.send(allUsers.map(user => {
+    res.send(allUsers.map((user) => {
         return {
             userID: user.userID,
             firstName: user.firstName,
@@ -71,7 +84,7 @@ app.post("/users/events", async (req, res) => {
     if(type === "UserCreated"){
         const mongo = await connectDB();
         const users = mongo.db("users").collection('users');
-        const reformattedData = {
+        const reformattedData : User = {
             userID: data._id,
             firstName: data.firstName,
             lastName: data.lastName,
