@@ -43,20 +43,28 @@ type UserType = {
 
 export default function Post({post} : {post: PostType}) {
 
-    
+    const [postData, setPostData] = useState<PostType>(post);
+
+    const onUpvote = () => {
+        setPostData({...postData, postUpvotes: [...postData.postUpvotes, {voteID: "1", voter: "1", postID: "1", voteType: "upvote"}]})
+    }
+
+    const onDownvote = () => {
+        setPostData({...postData, postDownvotes: [...postData.postDownvotes, {voteID: "1", voter: "1", postID: "1", voteType: "downvote"}]})
+    }
 
     return (
         <div className="card post-container">
-            <img className="card-img-top" src={post.postMedia} alt="img"></img>
-            <span className="card-body">{post.postText}</span>
+            <img className="card-img-top" src={postData.postMedia} alt="img"></img>
+            <span className="card-body">{postData.postText}</span>
             {/* Upvotes Here */}
             <div className="upvote-container">
-                <button className="btn btn-success">&uarr;</button>
-                <button className="btn btn-danger">&darr;</button>
-                <span>{post.postUpvotes.length - post.postDownvotes.length}</span>
+                <button onClick={onUpvote} className="btn btn-success">&uarr;</button>
+                <button onClick={onDownvote} className="btn btn-danger">&darr;</button>
+                <span>{postData.postUpvotes.length - postData.postDownvotes.length}</span>
             </div>
             {/* Comments Here */}
-            <h6 className="card-subtitle">Created by {post.userID}</h6>
+            <h6 className="card-subtitle">Created by {postData.userID}</h6>
         </div>
     );
 }

@@ -69,7 +69,7 @@ export default function MainPage({user} : {user: User}) {
         }
     }
 
-    useEffect(loadPostsByUser(user.userID), [])
+    useEffect(loadAllPosts, [])
 
     return (
         <div>
