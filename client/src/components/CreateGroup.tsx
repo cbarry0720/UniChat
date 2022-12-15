@@ -1,7 +1,7 @@
 import react from "react";
 import axios from "axios";
 import { useState } from "react";
-import "../styles/CreateDeadline.css";
+import "../styles/CreateGroup.css";
 
 
 type GroupType = {
@@ -46,7 +46,7 @@ export default function CreateGroup({user, groups, setGroups} : {user: UserType,
 
 
     return (
-        <div className = "create-deadline-container">
+        <div className = "create-group-container">
         <h2>Groups</h2>
         <form onSubmit={createGroup} className="form">
             <div className="form-group">
@@ -57,8 +57,6 @@ export default function CreateGroup({user, groups, setGroups} : {user: UserType,
                         groupName: e.target.value,
                     })
                 }}></textarea>
-            <br></br>
-            <label>Enter Date:</label>
             </div>
             <button type="submit" className="btn btn-primary post-button">Create Group</button>
         </form>

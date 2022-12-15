@@ -15,7 +15,7 @@ type DeadlineType = {
 export default function Deadline({deadline} : {deadline: DeadlineType}) {
     return(
         <div className = "block">
-            <b>{deadline.deadlineName}</b>
+            <b className = "title">{deadline.deadlineName}</b>
             <p>{deadline.deadlineTime}</p>
         </div>
     )

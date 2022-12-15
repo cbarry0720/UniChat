@@ -1,7 +1,7 @@
 import react, { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
-import "../styles/Deadline.css";
+import "../styles/Group.css";
 
 
 
@@ -42,10 +42,10 @@ export default function Group({group, user} : {group: GroupType, user: UserType}
 
     return(
         <div className = "block">
-            <b>{groupData.groupName}</b>
+            <b className = "title">{groupData.groupName}</b>
             <div>
                 {groupData.groupUsers.map(x=>{
-                    return <p key = {x}>{x}</p>
+                    return <p className = "word" key = {x}>{x}</p>
                 })}
             </div>
             <form onSubmit={joinGroup} className="form">
