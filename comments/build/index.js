@@ -20,7 +20,6 @@ app.use(cors());
 app.post('/comments/create', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // Handling Bad Requests
     const { postID, userID, content } = req.body;
-    // Check why userID is not being
     const params = [postID, userID, content];
     if (params.some((param, index) => (!param || param.trim() === ''))) {
         res.status(400).send({
@@ -75,6 +74,6 @@ app.get('/comments/:id', (req, res) => __awaiter(void 0, void 0, void 0, functio
     // Response
     res.status(200).send(comments);
 }));
-app.listen(4001, () => {
-    console.log('Listening on port 4001');
+app.listen(4003, () => {
+    console.log('Listening on port 4003');
 });

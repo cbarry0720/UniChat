@@ -22,7 +22,7 @@ app.post('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         // Handling Bad Request
         const post = data;
         const { postID, userID, groupID, postText, postMedia, postComments } = post;
-        const params = [postID, userID, groupID, postText, postMedia];
+        const params = [postID, userID, groupID, postText];
         if (params.some((param, index) => (!param || param.trim() === ''))) {
             res.status(400).send({
                 error: 'Body missing parameters',
@@ -98,8 +98,8 @@ app.post('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         data: data
     });
 }));
-app.listen(4003, () => {
-    console.log('Moderation service listening on port 4003');
+app.listen(4005, () => {
+    console.log('Moderation service listening on port 4005');
 });
 const moderateMessage = (content) => {
     const filter = new Filter();

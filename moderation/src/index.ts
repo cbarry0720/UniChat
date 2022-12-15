@@ -120,8 +120,8 @@ app.post('/events', async (req: Request, res: Response) => {
 
 })
 
-app.listen(4003, () => {
-    console.log('Moderation service listening on port 4003');
+app.listen(4005, () => {
+    console.log('Moderation service listening on port 4005');
 })
 
 const moderateMessage = (content: string) => {
