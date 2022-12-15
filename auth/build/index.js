@@ -142,7 +142,7 @@ app.post("/auth/signup", function (req, res) { return __awaiter(void 0, void 0, 
                 id = _b.sent();
                 user = __assign(__assign({}, newUser), { userID: id });
                 console.log(user);
-                return [4 /*yield*/, axios_1.default.post("http://localhost:4001/users/events", {
+                return [4 /*yield*/, axios_1.default.post("http://localhost:4010/events", {
                         type: "UserCreated",
                         data: user
                     })];

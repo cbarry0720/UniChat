@@ -1,6 +1,30 @@
-# Getting Started with Create React App
+# UniChat React Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Authors
+
+-   Chris Barry - [@cbarry0720](https://github.com/cbarry0720)
+-   Ibrahim Syed - [@ibrahimmsyed7](https://github.com/ibrahimmsyed7)
+-   Anshul Vemulapalli - [@x3z3](https://github.com/x3z3)
+
+## Description
+
+This is the frontend for the UniChat project. It is a React app that is written in typescript made from create-react-app. The app uses axios to make requests to the backend. It also uses bootstrap for styling.
+
+## Interaction with other services & API Endpoints
+
+The frontend interacts with the backend through the following endpoints:
+
+-   `/auth/login` - POST request to login - Auth service
+-   `/auth/signup` - POST request to signup - Auth service
+-   `/user/:id` - GET request to get a user - User service
+-   `/posts/create` - POST request to create a post - Posts service
+-   `/comment/create` - POST request to create a comment - Comments service
+-   `/deadline/create` - POST request to create a deadline - Deadlines service
+-   `/deadlines/all` - GET request to get all deadlines - Deadlines service
+-   `/groups/create` - POST request to create a group - Groups service
+-   `/groups/all` - GET request to get all groups - Groups service
+-   `/votes/create` - POST request to create a vote - Votes service
+    <!-- TODO: Add query endpoints -->
 
 ## Available Scripts
 

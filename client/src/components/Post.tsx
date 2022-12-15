@@ -3,13 +3,29 @@ import axios from "axios";
 import { useState } from "react";
 import "../styles/Post.css";
 
+type Comment = {
+    commentID : string,
+	postID : string,
+    userID : string,
+	content : string
+}
+
+type Vote = {
+    voteID : string,
+    voter : string,
+    postID : string,
+    voteType : string
+}
+
 type PostType = {
+    postID: string,
     userID: string,
+    groupID: string,
     postText: string,
     postMedia: string,
-    postUpvotes: [],
-    postDownvotes: [],
-    postComments: []
+    postUpvotes: Vote[],
+    postDownvotes: Vote[],
+    postComments: Comment[]
 }
 
 type UserType = {
@@ -25,56 +41,30 @@ type UserType = {
     deadlines: []
 }
 
-export default function Post({post} : {post: string}) {
+export default function Post({post} : {post: PostType}) {
 
-    const [user, setUser] = useState({
-        userID : "",
-        firstName: "",
-        lastName: "",
-        tagName: "",
-        posts: [],
-        comments: [],
-        upvotes: [],
-        downvotes: [],
-        courses: [],
-        deadlines: []
-    });
+    const [postData, setPostData] = useState<PostType>(post);
 
-    const [postData, setPostData] = useState({
-        userID: "",
-        postText: "",
-        postMedia: "",
-        postUpvotes: [],
-        postDownvotes: [],
-        postComments: []
-    });
-
-    const loadUser = async (id : string) => {
-        const response = await axios.get<UserType>("http://localhost:4001/users/" + id);
-        setUser(response.data);
+    const onUpvote = () => {
+        setPostData({...postData, postUpvotes: [...postData.postUpvotes, {voteID: "1", voter: "1", postID: "1", voteType: "upvote"}]})
     }
 
-    const loadPost = async () => {
-        const response = await axios.get<PostType>("http://localhost:4002/posts/" + post);
-        setPostData(response.data);
-        return response.data;
+    const onDownvote = () => {
+        setPostData({...postData, postDownvotes: [...postData.postDownvotes, {voteID: "1", voter: "1", postID: "1", voteType: "downvote"}]})
     }
-
-    useEffect(() => {
-        loadPost().then((x : PostType) => {
-            loadUser(x.userID);
-        })
-    }, []);
-
 
     return (
         <div className="card post-container">
             <img className="card-img-top" src={postData.postMedia} alt="img"></img>
             <span className="card-body">{postData.postText}</span>
             {/* Upvotes Here */}
-
+            <div className="upvote-container">
+                <button onClick={onUpvote} className="btn btn-success">&uarr;</button>
+                <button onClick={onDownvote} className="btn btn-danger">&darr;</button>
+                <span>{postData.postUpvotes.length - postData.postDownvotes.length}</span>
+            </div>
             {/* Comments Here */}
-            <h6 className="card-subtitle">Created by {user.tagName}</h6>
+            <h6 className="card-subtitle">Created by {postData.userID}</h6>
         </div>
     );
 }
