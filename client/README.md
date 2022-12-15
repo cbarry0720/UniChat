@@ -14,17 +14,19 @@ This is the frontend for the UniChat project. It is a React app that is written 
 
 The frontend interacts with the backend through the following endpoints:
 
--   `/auth/login` - POST request to login - Auth service
--   `/auth/signup` - POST request to signup - Auth service
--   `/user/:id` - GET request to get a user - User service
--   `/posts/create` - POST request to create a post - Posts service
--   `/comment/create` - POST request to create a comment - Comments service
--   `/deadline/create` - POST request to create a deadline - Deadlines service
--   `/deadlines/all` - GET request to get all deadlines - Deadlines service
--   `/groups/create` - POST request to create a group - Groups service
--   `/groups/all` - GET request to get all groups - Groups service
--   `/votes/create` - POST request to create a vote - Votes service
-    <!-- TODO: Add query endpoints -->
+-   `http://localhost:4000/auth/login` - POST request to login - Auth service
+-   `http://localhost:4000/auth/signup` - POST request to signup - Auth service
+-   `http://localhost:4001/user/:id` - GET request to get a user - User service
+-   `http://localhost:4002/posts/create` - POST request to create a post - Posts service
+-   `http://localhost:4003/comment/create` - POST request to create a comment - Comments service
+-   `http://localhost:4007/deadline/create` - POST request to create a deadline - Deadlines service
+-   `http://localhost:4007/deadlines/all` - GET request to get all deadlines - Deadlines service
+-   `http://localhost:4008/groups/create` - POST request to create a group - Groups service
+-   `http://localhost:4008/groups/all` - GET request to get all groups - Groups service
+-   `http://localhost:4006/votes/create` - POST request to create a vote - Votes service
+-   `http://localhost:4004/posts/all` - GET request to get all posts - Query service
+-   `http://localhost:4004/posts/user/:id` - GET request to get all posts by userID - Query service
+-   `http://localhost:4004/posts/group/:id` - GET request to get all posts by groupID - Query service
 
 ## Available Scripts
 
