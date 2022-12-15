@@ -3,6 +3,8 @@ import CreatePost from "../components/CreatePost";
 import Post from "../components/Post";
 import "../styles/MainPage.css"
 import axios from "axios";
+import CreateDeadline from '../components/CreateDeadline';
+import Deadline  from '../components/Deadline';
 
 type User = {
     userID : string,
@@ -43,6 +45,13 @@ type PostType = {
     postComments: Comment[]
 }
 
+type DeadlineType = {
+    deadlineID: string,
+    deadlineUsers: string[],
+    deadlineName: string,
+    deadlineTime: string,
+}
+  
 export default function MainPage({user} : {user: User}) {
 
     const [posts, setPosts] = React.useState<PostType[]>([]);
@@ -77,6 +86,9 @@ export default function MainPage({user} : {user: User}) {
 
     useEffect(loadAllPosts, [])
 
+    const [deadlines, setDeadlines] = React.useState<DeadlineType[]>([]);
+
+
     return (
         <div>
             <h1>UniChat</h1>
@@ -88,6 +100,15 @@ export default function MainPage({user} : {user: User}) {
                 </div>
                 <CreatePost setPosts={setPosts} posts={posts} user={user}/>
             </div>
+            <div className = "deadline-container">
+                <CreateDeadline setDeadlines={setDeadlines} deadlines={deadlines} user={user}/>
+                <div className="posts-container">
+                    {deadlines.map((deadline) => {
+                        return <Deadline key={deadline.deadlineID} deadline={deadline} />
+                    })}
+                </div>
+            </div>
+            
         </div>
     );
 }

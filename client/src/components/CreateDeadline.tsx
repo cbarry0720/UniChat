@@ -49,7 +49,7 @@ export default function CreateDeadline({user, deadlines, setDeadlines} : {user: 
 
 
     return (
-        <div>
+        <div className = "create-deadline-container">
         <h2>Deadlines</h2>
         <form onSubmit={createDeadline} className="form">
             <div className="form-group">
