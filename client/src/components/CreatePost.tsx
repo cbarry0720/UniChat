@@ -42,7 +42,7 @@ type UserType = {
     deadlines: string[]
 }
 
-export default function CreatePost({user, posts, setPosts} : {user: UserType, posts: PostType[], setPosts: react.Dispatch<react.SetStateAction<PostType[]>>}) {
+export default function CreatePost({user, reloadPosts} : {user: UserType, reloadPosts: () => void}) {
 
     const [postData, setPostData] = useState<PostType>({
         postID: "",
@@ -55,10 +55,10 @@ export default function CreatePost({user, posts, setPosts} : {user: UserType, po
         postComments: []
     });
 
-    const createPost = async (e : React.FormEvent<HTMLFormElement>) => {
+    const createPost = (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const post : PostType= (await axios.post("http://localhost:4002/posts/create", postData)).data.post;
-        setPosts([...posts, post]);
+        axios.post("http://localhost:4002/posts/create", postData)
+        reloadPosts();
     }
 
     return (

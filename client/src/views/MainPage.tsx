@@ -86,7 +86,7 @@ export default function MainPage({user} : {user: User}) {
                         return <Post key={post.postID} userID = {user.userID} post={post} />
                     })}
                 </div>
-                <CreatePost setPosts={setPosts} posts={posts} user={user}/>
+                <CreatePost reloadPosts={loadPostsByUser(user.userID)} user={user}/>
             </div>
         </div>
     );
