@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CreatePost from "../components/CreatePost";
 import Post from "../components/Post";
 import "../styles/MainPage.css"
@@ -43,9 +43,18 @@ type PostType = {
     postComments: Comment[]
 }
 
+type Filter = {
+    filter: string,
+    id: string
+}
+
 export default function MainPage({user} : {user: User}) {
 
-    const [posts, setPosts] = React.useState<PostType[]>([]);
+    const [posts, setPosts] = useState<PostType[]>([]);
+    const [filter, setFilter] = useState<Filter>({
+        filter: "user",
+        id: user.userID
+    });
 
     const loadAllPosts = () => {
         axios.get("http://localhost:4004/posts/all").then((res) => {
@@ -75,7 +84,19 @@ export default function MainPage({user} : {user: User}) {
         }
     }
 
-    useEffect(loadPostsByUser(user.userID), [])
+    const loadPostsByFilter = () => {
+        console.log("here")
+        console.log(filter)
+        if (filter.filter === "user") {
+            loadPostsByUser(filter.id)();
+        } else if (filter.filter === "group") {
+            loadPostsByGroup(filter.id)();
+        } else{
+            loadAllPosts()
+        }
+    }
+
+    useEffect(loadPostsByFilter, [filter]);
 
     return (
         <div>
@@ -86,7 +107,7 @@ export default function MainPage({user} : {user: User}) {
                         return <Post key={post.postID} userID = {user.userID} post={post} />
                     })}
                 </div>
-                <CreatePost reloadPosts={loadPostsByUser(user.userID)} user={user}/>
+                <CreatePost reloadPosts={loadPostsByFilter} user={user}/>
             </div>
         </div>
     );
