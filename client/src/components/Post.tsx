@@ -3,13 +3,29 @@ import axios from "axios";
 import { useState } from "react";
 import "../styles/Post.css";
 
+type Comment = {
+    commentID : string,
+	postID : string,
+    userID : string,
+	content : string
+}
+
+type Vote = {
+    voteID : string,
+    voter : string,
+    postID : string,
+    voteType : string
+}
+
 type PostType = {
+    postID: string,
     userID: string,
+    groupID: string,
     postText: string,
     postMedia: string,
-    postUpvotes: [],
-    postDownvotes: [],
-    postComments: []
+    postUpvotes: Vote[],
+    postDownvotes: Vote[],
+    postComments: Comment[]
 }
 
 type UserType = {
@@ -25,56 +41,22 @@ type UserType = {
     deadlines: []
 }
 
-export default function Post({post} : {post: string}) {
+export default function Post({post} : {post: PostType}) {
 
-    const [user, setUser] = useState({
-        userID : "",
-        firstName: "",
-        lastName: "",
-        tagName: "",
-        posts: [],
-        comments: [],
-        upvotes: [],
-        downvotes: [],
-        courses: [],
-        deadlines: []
-    });
-
-    const [postData, setPostData] = useState({
-        userID: "",
-        postText: "",
-        postMedia: "",
-        postUpvotes: [],
-        postDownvotes: [],
-        postComments: []
-    });
-
-    const loadUser = async (id : string) => {
-        const response = await axios.get<UserType>("http://localhost:4001/users/" + id);
-        setUser(response.data);
-    }
-
-    const loadPost = async () => {
-        const response = await axios.get<PostType>("http://localhost:4002/posts/" + post);
-        setPostData(response.data);
-        return response.data;
-    }
-
-    useEffect(() => {
-        loadPost().then((x : PostType) => {
-            loadUser(x.userID);
-        })
-    }, []);
-
+    
 
     return (
         <div className="card post-container">
-            <img className="card-img-top" src={postData.postMedia} alt="img"></img>
-            <span className="card-body">{postData.postText}</span>
+            <img className="card-img-top" src={post.postMedia} alt="img"></img>
+            <span className="card-body">{post.postText}</span>
             {/* Upvotes Here */}
-
+            <div className="upvote-container">
+                <button className="btn btn-success">&uarr;</button>
+                <button className="btn btn-danger">&darr;</button>
+                <span>{post.postUpvotes.length - post.postDownvotes.length}</span>
+            </div>
             {/* Comments Here */}
-            <h6 className="card-subtitle">Created by {user.tagName}</h6>
+            <h6 className="card-subtitle">Created by {post.userID}</h6>
         </div>
     );
 }

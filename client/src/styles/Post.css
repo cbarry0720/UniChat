@@ -9,3 +9,6 @@
     border-top: black 1px solid;
     text-align: right;
 }
+.upvote-container, .upvote-container > button, .upvote-container > span{
+    margin: 10px;
+}
