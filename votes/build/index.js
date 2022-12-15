@@ -65,6 +65,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var mongodb_1 = require("mongodb");
 var bodyParser = __importStar(require("body-parser"));
+var axios_1 = __importDefault(require("axios"));
 var cors_1 = __importDefault(require("cors"));
 var app = (0, express_1.default)();
 app.use(bodyParser.json());
@@ -147,15 +148,26 @@ app.post("/votes/create", function (req, res) { return __awaiter(void 0, void 0,
                     })];
             case 2:
                 id = _b.sent();
-                if (id) {
-                    res.status(201).send({
-                        voteID: id.insertedId,
-                        voter: userID,
-                        postID: postID,
-                        voteType: voteType,
-                    });
-                    return [2 /*return*/];
-                }
+                if (!id) return [3 /*break*/, 4];
+                return [4 /*yield*/, axios_1.default.post('http://localhost:4010/events', {
+                        type: 'VoteCreated',
+                        data: {
+                            voteID: id.insertedId,
+                            voter: userID,
+                            postID: postID,
+                            voteType: voteType,
+                        },
+                    })];
+            case 3:
+                _b.sent();
+                res.status(201).send({
+                    voteID: id.insertedId,
+                    voter: userID,
+                    postID: postID,
+                    voteType: voteType,
+                });
+                return [2 /*return*/];
+            case 4:
                 res.status(500).send("Internal Server Error!");
                 return [2 /*return*/];
         }
