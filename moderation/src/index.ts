@@ -13,7 +13,9 @@ type Post = {
     groupID: string,
     postText: string,
     postMedia: string,
-    postComments: Comment[]
+    postComments: Comment[],
+    postUpvotes: Vote[],
+    postDownvotes: Vote[]
 }
 
 type Comment = {
@@ -21,6 +23,13 @@ type Comment = {
 	postID : string,
     userID : string,
 	content : string
+}
+
+type Vote = {
+    voteID : string,
+    voter : string,
+    postID : string,
+    voteType : string
 }
 
 const app: Express = express();
@@ -46,7 +55,9 @@ app.post('/events', async (req: Request, res: Response) => {
                     "groupID": "string",
                     "postText": "string",
                     "postMedia": "string",
-                    "postComments": []
+                    "postComments": [],
+                    "postUpvotes": [],
+                    "postDownvotes": []
                 }
             });
             return;
@@ -59,6 +70,8 @@ app.post('/events', async (req: Request, res: Response) => {
             postText: moderateMessage(postText),
             postMedia: postMedia,
             postComments: postComments,
+            postUpvotes: [],
+            postDownvotes: []
         }
         await axios.post('http://localhost:4010/events', {
             type: 'PostModerated',
