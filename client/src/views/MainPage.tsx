@@ -75,7 +75,7 @@ export default function MainPage({user} : {user: User}) {
         }
     }
 
-    useEffect(loadAllPosts, [])
+    useEffect(loadPostsByUser(user.userID), [])
 
     return (
         <div>
@@ -83,7 +83,7 @@ export default function MainPage({user} : {user: User}) {
             <div className="main-page">
                 <div className="posts-container">
                     {posts.map((post) => {
-                        return <Post key={post.postID} post={post} />
+                        return <Post key={post.postID} userID = {user.userID} post={post} />
                     })}
                 </div>
                 <CreatePost setPosts={setPosts} posts={posts} user={user}/>
