@@ -36,7 +36,7 @@ app.post('/events', async (req: Request, res: Response) => {
         // Handling Bad Request
         const post : Post = data;
         const {postID, userID, groupID, postText, postMedia, postComments} = post;
-        const params : any[] = [postID, userID, groupID, postText, postMedia];
+        const params : any[] = [postID, userID, groupID, postText];
         if (params.some((param, index) => (!param || param.trim() === ''))) {
             res.status(400).send({
                 error: 'Body missing parameters',
