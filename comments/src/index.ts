@@ -23,7 +23,6 @@ app.post('/comments/create', async (req: Request, res: Response) => {
 
     // Handling Bad Requests
     const { postID, userID, content } : {postID : string, userID : string, content: string} = req.body;
-    // Check why userID is not being
     const params  : any[] = [postID, userID, content];
     if (params.some((param, index) => (!param || param.trim() === ''))) {
         res.status(400).send({
