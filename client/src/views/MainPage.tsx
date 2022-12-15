@@ -68,7 +68,8 @@ type Filter = {
 }
 
 export default function MainPage({user} : {user: User}) {
-
+    const [deadlines, setDeadlines] = React.useState<DeadlineType[]>([]);
+    const [groups, setGroups] = React.useState<GroupType[]>([]);
     const [posts, setPosts] = useState<PostType[]>([]);
     const [filter, setFilter] = useState<Filter>({
         filter: "user",
@@ -78,6 +79,18 @@ export default function MainPage({user} : {user: User}) {
     const loadAllPosts = () => {
         axios.get("http://localhost:4004/posts/all").then((res) => {
             setPosts(res.data)
+        })
+    }
+
+    const loadAllDeadlines = () => {
+        axios.get("http://localhost:4007/deadlines/all").then((res) => {
+            setDeadlines(res.data)
+        })
+    }
+
+    const loadAllGroups = () => {
+        axios.get("http://localhost:4008/group/all").then((res) => {
+            setGroups(res.data)
         })
     }
 
@@ -115,11 +128,13 @@ export default function MainPage({user} : {user: User}) {
         }
     }
 
-    useEffect(loadPostsByFilter, [filter]);
+    const loadEverything = () =>{
+        loadPostsByFilter();
+        loadAllDeadlines();
+        loadAllGroups();
+    }
 
-    const [deadlines, setDeadlines] = React.useState<DeadlineType[]>([]);
-    const [groups, setGroups] = React.useState<GroupType[]>([]);
-
+    useEffect(loadEverything, [filter]);
 
     return (
         <div>
@@ -144,7 +159,7 @@ export default function MainPage({user} : {user: User}) {
                 <CreateGroup setGroups={setGroups} groups={groups} user={user}/>
                 <div className="posts-container">
                     {groups.map((group) => {
-                        return <Group key={group.groupID} group={group} user = {user} />
+                        return <Group key={group.groupID} group={group} user = {user} setFilter = {setFilter}/>
                     })}
                 </div>
             </div>
