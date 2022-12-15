@@ -5,6 +5,8 @@ import "../styles/MainPage.css"
 import axios from "axios";
 import CreateDeadline from '../components/CreateDeadline';
 import Deadline  from '../components/Deadline';
+import CreateGroup from "../components/CreateGroup";
+import Group from "../components/Group";
 
 type User = {
     userID : string,
@@ -51,6 +53,12 @@ type DeadlineType = {
     deadlineName: string,
     deadlineTime: string,
 }
+
+type GroupType = {
+    groupID: string,
+    groupUsers: string[],
+    groupName: string,
+}
   
 export default function MainPage({user} : {user: User}) {
 
@@ -87,6 +95,7 @@ export default function MainPage({user} : {user: User}) {
     useEffect(loadAllPosts, [])
 
     const [deadlines, setDeadlines] = React.useState<DeadlineType[]>([]);
+    const [groups, setGroups] = React.useState<GroupType[]>([]);
 
 
     return (
@@ -108,7 +117,14 @@ export default function MainPage({user} : {user: User}) {
                     })}
                 </div>
             </div>
-            
+            <div className = "deadline-container">
+                <CreateGroup setGroups={setGroups} groups={groups} user={user}/>
+                <div className="posts-container">
+                    {groups.map((group) => {
+                        return <Group key={group.groupID} group={group} user = {user} />
+                    })}
+                </div>
+            </div>
         </div>
     );
 }

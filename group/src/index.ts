@@ -51,7 +51,7 @@ app.post("/group/create", async (req, res) => {
       groupName: groupName,
     });
     if(id){
-      await axios.post('http://eventbus:4010/events', {
+      await axios.post('http://localhost:4010/events', {
         type: 'GroupCreated',
         data: {
           groupID: id.insertedId,

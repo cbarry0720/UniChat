@@ -65,6 +65,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var mongodb_1 = require("mongodb");
 var bodyParser = __importStar(require("body-parser"));
+var axios_1 = __importDefault(require("axios"));
 var cors_1 = __importDefault(require("cors"));
 var app = (0, express_1.default)();
 app.use(bodyParser.json());
@@ -89,7 +90,7 @@ function connectDB() {
         });
     });
 }
-app.get("/groups/all", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+app.get("/group/all", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var mongo, groups, allGroups;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -105,7 +106,7 @@ app.get("/groups/all", function (req, res) { return __awaiter(void 0, void 0, vo
         }
     });
 }); });
-app.get("/groups/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+app.get("/group/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var mongo, groups, group;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -145,14 +146,24 @@ app.post("/group/create", function (req, res) { return __awaiter(void 0, void 0,
                     })];
             case 2:
                 id = _b.sent();
-                if (id) {
-                    res.status(201).send({
-                        groupID: id.insertedId,
-                        groupUsers: [userID],
-                        groupName: groupName,
-                    });
-                    return [2 /*return*/];
-                }
+                if (!id) return [3 /*break*/, 4];
+                return [4 /*yield*/, axios_1.default.post('http://localhost:4010/events', {
+                        type: 'GroupCreated',
+                        data: {
+                            groupID: id.insertedId,
+                            groupUsers: [userID],
+                            groupName: groupName,
+                        },
+                    })];
+            case 3:
+                _b.sent();
+                res.status(201).send({
+                    groupID: id.insertedId,
+                    groupUsers: [userID],
+                    groupName: groupName,
+                });
+                return [2 /*return*/];
+            case 4:
                 res.status(500).send("Internal Server Error!");
                 return [2 /*return*/];
         }
@@ -182,15 +193,24 @@ app.post("/group/addUser", function (req, res) { return __awaiter(void 0, void 0
             case 3: return [4 /*yield*/, groups.updateOne({ _id: groupID }, { $push: { groupUsers: userID } })];
             case 4:
                 userAddedToGroup = _a.sent();
-                if (userAddedToGroup) {
-                    res.status(200).send("User added to group");
-                    return [2 /*return*/];
-                }
+                if (!userAddedToGroup) return [3 /*break*/, 6];
+                return [4 /*yield*/, axios_1.default.post('http://eventbus:4010/events', {
+                        type: 'UserAddedToGroup',
+                        data: {
+                            userID: userID,
+                            groupID: groupID
+                        },
+                    })];
+            case 5:
+                _a.sent();
+                res.status(200).send("User added to group");
+                return [2 /*return*/];
+            case 6:
                 res.status(500).send("Internal Server Error!");
                 return [2 /*return*/];
         }
     });
 }); });
-app.listen(4007, function () {
-    console.log("Running on ".concat(4007, "."));
+app.listen(4008, function () {
+    console.log("Running on ".concat(4008, "."));
 });
