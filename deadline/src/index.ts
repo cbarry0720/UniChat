@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import express, { Request, Response } from 'express';
 import { MongoClient, ObjectId } from "mongodb";
 import * as bodyParser from "body-parser";
-import * as axios from 'axios';
+import axios from 'axios';
 import cors from 'cors';
 
 const app = express();
@@ -51,6 +51,15 @@ app.post("/deadline/create", async (req, res) => {
     deadlineTime: deadlineTime,
   });
   if(id){
+    await axios.post('http://eventbus:4010/events', {
+      type: 'deadlineCreated',
+      data: {
+        deadlineID: id.insertedId,
+        deadlineUsers: [userID],
+        deadlineName: deadlineName,
+        deadlineTime: deadlineTime,
+      },
+    });
       res.status(201).send({
           deadlineID: id.insertedId,
           deadlineUsers: [userID],
@@ -79,6 +88,13 @@ app.post("/deadline/addUser", async (req, res) => {
   else{
     const subscribedToDeadline = await deadlines.updateOne({_id: deadlineID}, {$push: {deadlineUsers: userID}});
         if(subscribedToDeadline){
+          await axios.post('http://eventbus:4010/events', {
+            type: 'deadlineCreated',
+            data: {
+              userID,
+              deadlineID
+            },
+          });
             res.status(200).send("User subscribed to deadline");
             return;
         }

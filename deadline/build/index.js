@@ -65,6 +65,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var mongodb_1 = require("mongodb");
 var bodyParser = __importStar(require("body-parser"));
+var axios_1 = __importDefault(require("axios"));
 var cors_1 = __importDefault(require("cors"));
 var app = (0, express_1.default)();
 app.use(bodyParser.json());
@@ -146,21 +147,32 @@ app.post("/deadline/create", function (req, res) { return __awaiter(void 0, void
                     })];
             case 2:
                 id = _b.sent();
-                if (id) {
-                    res.status(201).send({
-                        deadlineID: id.insertedId,
-                        deadlineUsers: [userID],
-                        deadlineName: deadlineName,
-                        deadlineTime: deadlineTime,
-                    });
-                    return [2 /*return*/];
-                }
+                if (!id) return [3 /*break*/, 4];
+                return [4 /*yield*/, axios_1.default.post('http://eventbus:4010/events', {
+                        type: 'deadlineCreated',
+                        data: {
+                            deadlineID: id.insertedId,
+                            deadlineUsers: [userID],
+                            deadlineName: deadlineName,
+                            deadlineTime: deadlineTime,
+                        },
+                    })];
+            case 3:
+                _b.sent();
+                res.status(201).send({
+                    deadlineID: id.insertedId,
+                    deadlineUsers: [userID],
+                    deadlineName: deadlineName,
+                    deadlineTime: deadlineTime,
+                });
+                return [2 /*return*/];
+            case 4:
                 res.status(500).send("Internal Server Error!");
                 return [2 /*return*/];
         }
     });
 }); });
-app.post("/deadlines/addUser", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+app.post("/deadline/addUser", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var userID, deadlineID, mongo, deadlines, deadline, subscribedToDeadline;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -184,10 +196,19 @@ app.post("/deadlines/addUser", function (req, res) { return __awaiter(void 0, vo
             case 3: return [4 /*yield*/, deadlines.updateOne({ _id: deadlineID }, { $push: { deadlineUsers: userID } })];
             case 4:
                 subscribedToDeadline = _a.sent();
-                if (subscribedToDeadline) {
-                    res.status(200).send("User subscribed to deadline");
-                    return [2 /*return*/];
-                }
+                if (!subscribedToDeadline) return [3 /*break*/, 6];
+                return [4 /*yield*/, axios_1.default.post('http://eventbus:4010/events', {
+                        type: 'deadlineCreated',
+                        data: {
+                            userID: userID,
+                            deadlineID: deadlineID
+                        },
+                    })];
+            case 5:
+                _a.sent();
+                res.status(200).send("User subscribed to deadline");
+                return [2 /*return*/];
+            case 6:
                 res.status(500).send("Internal Server Error!");
                 return [2 /*return*/];
         }
