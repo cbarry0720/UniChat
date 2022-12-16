@@ -12,7 +12,6 @@ import logger from 'morgan';
 import { MongoClient } from "mongodb";
 import cors from 'cors';
 import axios from 'axios';
-const database = [];
 const app = express();
 app.use(logger('dev'));
 app.use(express.json());
@@ -32,14 +31,6 @@ app.post('/comments/create', (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
         return;
     }
-    // Create a comment
-    // const commentID : string = randomBytes(8).toString('hex');
-    // const comment : Comment = {
-    //     commentID : commentID,
-    //     postID : postID,
-    //     userID : userID,
-    //     content : content
-    // }
     // Push to DB
     const comment = yield addToDB(postID, userID, content);
     if (!comment) {

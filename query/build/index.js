@@ -163,7 +163,10 @@ const updatePostByVote = (vote) => __awaiter(void 0, void 0, void 0, function* (
     const mongo = yield connectDB();
     const db = mongo.db('query').collection('query');
     try {
-        db.updateOne({ "postid": vote.postID }, { $push: { postVotes: vote } });
+        const ret = yield db.updateOne({ "postID": vote.postID }, { $push: { postVotes: vote } });
+        if (ret.modifiedCount === 0) {
+            return false;
+        }
         return true;
     }
     catch (e) {

@@ -1,5 +1,21 @@
 version: '3.7'
 services:
+  client:
+    build: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth
+      - users
+      - posts
+      - comments
+      - query
+      - moderation
+      - votes
+      - deadline
+      - group
+      - notifications
+      - eventbus
   auth:
     build: ./auth
     ports:
@@ -22,28 +38,28 @@ services:
     build: ./posts
     ports:
       - "4002:4002"
-  #   depends_on:
-  #     - mongodb_container
-  #   environment:
-  #     DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/posts?directConnection=true&authSource=admin
+    depends_on:
+      - mongodb_container
+    environment:
+      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/posts?directConnection=true&authSource=admin
 
   comments:
     build: ./comments
     ports:
       - "4003:4003"
-    # depends_on:
-    #   - mongodb_container
-    # environment:
-    #   DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/comments?directConnection=true&authSource=admin
+    depends_on:
+      - mongodb_container
+    environment:
+      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/comments?directConnection=true&authSource=admin
 
   query:
     build: ./query
     ports:
       - "4004:4004"
-    # depends_on:
-    #   - mongodb_container
-    # environment:
-    #   DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/query?directConnection=true&authSource=admin
+    depends_on:
+      - mongodb_container
+    environment:
+      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/query?directConnection=true&authSource=admin
 
   moderation:
     build: ./moderation
