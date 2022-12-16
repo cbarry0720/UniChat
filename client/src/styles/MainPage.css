@@ -11,3 +11,11 @@
     flex-direction: row;
     flex-wrap: wrap;
 }
+
+.deadline-container{
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow: hidden;
+}
