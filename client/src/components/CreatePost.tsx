@@ -63,8 +63,9 @@ export default function CreatePost({user, group, reloadPosts} : {user: UserType,
 
     const createPost = (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log("group")
         console.log(group)
-        setPostData({
+        const data = {
             postID: postData.postID,
             userID: user.userID,
             groupID: group ? group.groupID : "123",
@@ -73,8 +74,8 @@ export default function CreatePost({user, group, reloadPosts} : {user: UserType,
             postUpvotes: postData.postUpvotes,
             postDownvotes: postData.postDownvotes,
             postComments: postData.postComments
-        })
-        axios.post("http://localhost:4002/posts/create", postData).then(() => {
+        }
+        axios.post("http://localhost:4002/posts/create", data).then(() => {
             setTimeout(() => {
                 reloadPosts();
             }, 500);
