@@ -90,7 +90,6 @@ export default function MainPage({user} : {user: User}) {
 
     const loadAllGroups = () => {
         axios.get("http://localhost:4008/group/all").then((res) => {
-            console.log(res.data)
             setGroups(res.data)
         })
     }
@@ -130,7 +129,6 @@ export default function MainPage({user} : {user: User}) {
     }
 
     const loadEverything = () =>{
-        console.log(filter)
         loadPostsByFilter();
         loadAllDeadlines();
         loadAllGroups();
