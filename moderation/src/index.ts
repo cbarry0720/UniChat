@@ -73,7 +73,7 @@ app.post('/events', async (req: Request, res: Response) => {
             postUpvotes: [],
             postDownvotes: []
         }
-        await axios.post('http://localhost:4010/events', {
+        await axios.post('http://eventbus:4010/events', {
             type: 'PostModerated',
             data: postData
         }).catch((err: AxiosError) => {
@@ -111,7 +111,7 @@ app.post('/events', async (req: Request, res: Response) => {
             content: moderateMessage(content)
         }
 
-        await axios.post('http://localhost:4010/events', {
+        await axios.post('http://eventbus:4010/events', {
             type: 'CommentModerated',
             data: commentData
         }).catch((err: AxiosError) => {

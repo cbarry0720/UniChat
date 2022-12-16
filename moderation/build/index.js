@@ -49,7 +49,7 @@ app.post('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             postUpvotes: [],
             postDownvotes: []
         };
-        yield axios.post('http://localhost:4010/events', {
+        yield axios.post('http://eventbus:4010/events', {
             type: 'PostModerated',
             data: postData
         }).catch((err) => {
@@ -84,7 +84,7 @@ app.post('/events', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             userID: userID,
             content: moderateMessage(content)
         };
-        yield axios.post('http://localhost:4010/events', {
+        yield axios.post('http://eventbus:4010/events', {
             type: 'CommentModerated',
             data: commentData
         }).catch((err) => {

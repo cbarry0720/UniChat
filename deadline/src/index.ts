@@ -51,7 +51,7 @@ app.post("/deadline/create", async (req, res) => {
     deadlineTime: deadlineTime,
   });
   if(id){
-    await axios.post('http://localhost:4010/events', {
+    await axios.post('http://eventbus:4010/events', {
       type: 'DeadlineCreated',
       data: {
         deadlineID: id.insertedId,

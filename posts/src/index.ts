@@ -78,7 +78,7 @@ app.post("/posts/create", async (req, res) => {
         postComments: []
     }
     if(id){
-        await axios.post("http://localhost:4010/events", {
+        await axios.post("http://eventbus:4010/events", {
             type: "PostCreated",
             data: post
         });
