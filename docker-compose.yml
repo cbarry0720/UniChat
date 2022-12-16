@@ -18,14 +18,37 @@ services:
     environment:
       DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/users?directConnection=true&authSource=admin
 
-  deadline:
-    build: ./deadline
+  posts:
+    build: ./posts
     ports:
-      - "4007:4007"
-    depends_on:
-      - mongodb_container
-    environment:
-      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/deadline?directConnection=true&authSource=admin
+      - "4002:4002"
+  #   depends_on:
+  #     - mongodb_container
+  #   environment:
+  #     DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/posts?directConnection=true&authSource=admin
+
+  comments:
+    build: ./comments
+    ports:
+      - "4003:4003"
+    # depends_on:
+    #   - mongodb_container
+    # environment:
+    #   DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/comments?directConnection=true&authSource=admin
+
+  query:
+    build: ./query
+    ports:
+      - "4004:4004"
+    # depends_on:
+    #   - mongodb_container
+    # environment:
+    #   DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/query?directConnection=true&authSource=admin
+
+  moderation:
+    build: ./moderation
+    # ports:
+    #   - "4005:4005"
 
   votes:
     build: ./votes
@@ -36,6 +59,15 @@ services:
     environment:
       DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/votes?directConnection=true&authSource=admin
 
+  deadline:
+    build: ./deadline
+    ports:
+      - "4007:4007"
+    depends_on:
+      - mongodb_container
+    environment:
+      DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/deadline?directConnection=true&authSource=admin
+
   group:
     build: ./group
     ports:
@@ -44,6 +76,16 @@ services:
       - mongodb_container
     environment:
       DATABASE_URL: mongodb://root:rootpassword@mongodb_container:27017/group?directConnection=true&authSource=admin
+
+  notifications:
+    build: ./notifications
+    # ports:
+    #   - "4009:4009"
+
+  eventbus:
+    build: ./eventbus
+    # ports:
+    #   - "4010:4010"
   
   mongodb_container:
     image: mongo:latest

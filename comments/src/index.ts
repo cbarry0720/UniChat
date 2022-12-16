@@ -1,17 +1,16 @@
 import express, { Express, Request, Response } from 'express';
 import logger from 'morgan';
 import { randomBytes } from 'crypto';
+import { MongoClient, ObjectId } from "mongodb";
 import cors from 'cors';
 import axios, { AxiosError } from 'axios';
 
 type Comment = {
-    "commentID" : string,
+    "commentID" : ObjectId,
 	"postID" : string,
     "userID" : string,
 	"content" : string
 }
-
-const database : Comment[] = [];
 
 const app: Express = express();
 
@@ -36,18 +35,18 @@ app.post('/comments/create', async (req: Request, res: Response) => {
         return;
     }    
 
-    // Create a comment
-    const commentID : string = randomBytes(8).toString('hex');
-    const comment : Comment = {
-        commentID : commentID,
-        postID : postID,
-        userID : userID,
-        content : content
-    }
-    
     // Push to DB
-    // TODO : MongoDB should be indexable by commentID
-    database.push(comment);
+    const comment = await addToDB(postID, userID, content);
+    if (!comment) {
+        res.status(500).send({
+            error: 'Internal Server Error',
+            expected: {
+                "postID" : "string",
+                "userID" : "string",
+                "content" : "string"
+            }
+        });
+    }
 
     // Call Event bus
     await axios.post("http://localhost:4010/events", {
@@ -65,6 +64,21 @@ app.post('/comments/create', async (req: Request, res: Response) => {
 });
 
 
+app.get('/comments/all', async (req: Request, res: Response) => {
+    
+    // Get from DB
+    const comments = await getAllFromDB();
+    if (!comments) {
+        res.status(500).send({
+            error: 'Internal Server Error'
+        });
+    }
+    
+    // Response
+    res.status(200).send(comments);
+    
+})
+
 app.get('/comments/:id', async (req: Request, res: Response) => {
 
     // Handling Bad Requests
@@ -81,17 +95,73 @@ app.get('/comments/:id', async (req: Request, res: Response) => {
     }
 
     // Get from DB
-    const comments = database.filter((comment: Comment) => comment.postID === postID);
-
-    // Call Event Bus ?
+    const comments = await getFromDB(postID);
+    if (!comments) {
+        res.status(500).send({
+            error: 'Internal Server Error',
+            expected: {
+                "postID" : "string"
+            }
+        });
+    }
 
     // Response
     res.status(200).send(comments);
 
-
 })
-
 
 app.listen(4003, () => {
     console.log('Listening on port 4003');
 });
+
+async function connectDB(): Promise<MongoClient> {
+    const uri = process.env.DATABASE_URL || 'mongodb://localhost:27017';
+
+    if (uri === undefined) {
+      throw Error('DATABASE_URL environment variable is not specified');
+    }
+
+    const mongo = new MongoClient(uri);
+    await mongo.connect();
+    return await Promise.resolve(mongo);
+}
+
+const addToDB = async (postID: string, userID: string, content: string) => {
+    const mongo = await connectDB();
+    const comments = mongo.db("comments").collection('comments');
+
+    const id = await comments.insertOne({
+        userID: userID,
+        postID: postID,
+        content: content
+    });
+
+    if (id) {
+        const comment : Comment = {
+            commentID : id.insertedId,
+            postID : postID,
+            userID : userID,
+            content : content
+        }
+        return comment;
+    }
+    return null;
+}
+
+const getFromDB = async (postID: string) => {
+    const mongo = await connectDB();
+    const comments = mongo.db("comments").collection('comments');
+
+    const filteredComments = await comments.find({postID: postID }).toArray();
+
+    return filteredComments;
+}
+
+const getAllFromDB = async () => {
+    const mongo = await connectDB();
+    const comments = mongo.db("comments").collection('comments');
+
+    const filteredComments = await comments.find({}).toArray();
+
+    return filteredComments;
+}
