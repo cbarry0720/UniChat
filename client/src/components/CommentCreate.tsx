@@ -6,9 +6,10 @@ import { useState } from "react";
 type Props = {
     postID: string,
     userID: string,
+    reloadPosts: () => void
 }
 
-export default function CommentCreate({postID, userID} : Props) {
+export default function CommentCreate({postID, userID, reloadPosts} : Props) {
 
     const [commentText, setCommentText] = useState<string>("");
 
@@ -20,6 +21,10 @@ export default function CommentCreate({postID, userID} : Props) {
             userID: userID,
             content: commentText
         })
+
+        setTimeout(() => {
+            reloadPosts();
+        }, 500)
     }
 
     return (

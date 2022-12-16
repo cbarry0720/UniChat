@@ -43,7 +43,7 @@ type UserType = {
     deadlines: []
 }
 
-export default function Post({userID, post} : {userID: string, post: PostType}) {
+export default function Post({userID, post, reloadPosts} : {userID: string, post: PostType, reloadPosts: () => void}) {
 
     const [postData, setPostData] = useState<PostType>(post);
     const [localVoteValue, setLocalVoteValue] = useState<number>(0);
@@ -91,7 +91,7 @@ export default function Post({userID, post} : {userID: string, post: PostType}) 
             
             {/* Comments Here */}
             <CommentList comments={postData.postComments}/>
-            <CommentCreate postID={postData.postID} userID={postData.userID}/>
+            <CommentCreate reloadPosts={reloadPosts} postID={postData.postID} userID={postData.userID}/>
             <h6 className="card-subtitle">Created by {postData.userID}</h6>
         </div>
     );

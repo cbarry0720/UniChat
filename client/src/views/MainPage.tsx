@@ -142,10 +142,10 @@ export default function MainPage({user} : {user: User}) {
             <div className="main-page">
                 <div className="posts-container">
                     {posts.map((post) => {
-                        return <Post key={post.postID} userID = {user.userID} post={post} />
+                        return <Post reloadPosts={loadPostsByFilter} key={post.postID} userID = {user.userID} post={post} />
                     })}
                 </div>
-                <CreatePost reloadPosts={loadPostsByFilter} user={user}/>
+                <CreatePost group={filter.filter === "group" ? groups.filter((x) => x.groupID === filter.id)[0] : undefined} reloadPosts={loadPostsByFilter} user={user}/>
             </div>
             <div className = "deadline-container">
                 <CreateDeadline setDeadlines={setDeadlines} deadlines={deadlines} user={user}/>

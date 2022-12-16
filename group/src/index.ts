@@ -24,8 +24,15 @@ app.get("/group/all", async (req, res) => {
   const mongo = await connectDB();
   const groups = mongo.db("groups").collection('groups');
   const allGroups = await groups.find({}).toArray();
-  res.send(allGroups);
+  res.send(allGroups.map((group) => {
+    return {
+      groupID: group._id,
+      groupUsers: group.groupUsers,
+      groupName: group.groupName,
+    }
+  }));
 });
+
 
 app.get("/group/:id", async (req, res) => {
   const mongo = await connectDB();
