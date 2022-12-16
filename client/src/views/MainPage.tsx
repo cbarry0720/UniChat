@@ -68,7 +68,8 @@ type Filter = {
 }
 
 export default function MainPage({user} : {user: User}) {
-
+    const [deadlines, setDeadlines] = React.useState<DeadlineType[]>([]);
+    const [groups, setGroups] = React.useState<GroupType[]>([]);
     const [posts, setPosts] = useState<PostType[]>([]);
     const [filter, setFilter] = useState<Filter>({
         filter: "user",
@@ -78,6 +79,19 @@ export default function MainPage({user} : {user: User}) {
     const loadAllPosts = () => {
         axios.get("http://localhost:4004/posts/all").then((res) => {
             setPosts(res.data)
+        })
+    }
+
+    const loadAllDeadlines = () => {
+        axios.get("http://localhost:4007/deadlines/all").then((res) => {
+            setDeadlines(res.data)
+        })
+    }
+
+    const loadAllGroups = () => {
+        axios.get("http://localhost:4008/group/all").then((res) => {
+            console.log(res.data)
+            setGroups(res.data)
         })
     }
 
@@ -115,11 +129,14 @@ export default function MainPage({user} : {user: User}) {
         }
     }
 
-    useEffect(loadPostsByFilter, [filter]);
+    const loadEverything = () =>{
+        console.log(filter)
+        loadPostsByFilter();
+        loadAllDeadlines();
+        loadAllGroups();
+    }
 
-    const [deadlines, setDeadlines] = React.useState<DeadlineType[]>([]);
-    const [groups, setGroups] = React.useState<GroupType[]>([]);
-
+    useEffect(loadEverything, [filter]);
 
     return (
         <div>
@@ -127,10 +144,10 @@ export default function MainPage({user} : {user: User}) {
             <div className="main-page">
                 <div className="posts-container">
                     {posts.map((post) => {
-                        return <Post key={post.postID} userID = {user.userID} post={post} />
+                        return <Post reloadPosts={loadPostsByFilter} key={post.postID} userID = {user.userID} post={post} />
                     })}
                 </div>
-                <CreatePost reloadPosts={loadPostsByFilter} user={user}/>
+                <CreatePost group={filter.filter === "group" ? groups.filter((x) => x.groupID === filter.id)[0] : undefined} reloadPosts={loadPostsByFilter} user={user}/>
             </div>
             <div className = "deadline-container">
                 <CreateDeadline setDeadlines={setDeadlines} deadlines={deadlines} user={user}/>
@@ -144,7 +161,7 @@ export default function MainPage({user} : {user: User}) {
                 <CreateGroup setGroups={setGroups} groups={groups} user={user}/>
                 <div className="posts-container">
                     {groups.map((group) => {
-                        return <Group key={group.groupID} group={group} user = {user} />
+                        return <Group key={group.groupID} group={group} user = {user} setFilter = {setFilter}/>
                     })}
                 </div>
             </div>

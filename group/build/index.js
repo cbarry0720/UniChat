@@ -101,7 +101,13 @@ app.get("/group/all", function (req, res) { return __awaiter(void 0, void 0, voi
                 return [4 /*yield*/, groups.find({}).toArray()];
             case 2:
                 allGroups = _a.sent();
-                res.send(allGroups);
+                res.send(allGroups.map(function (group) {
+                    return {
+                        groupID: group._id,
+                        groupUsers: group.groupUsers,
+                        groupName: group.groupName,
+                    };
+                }));
                 return [2 /*return*/];
         }
     });

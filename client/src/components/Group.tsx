@@ -25,10 +25,14 @@ type UserType = {
     deadlines: string[]
 }
 
+type Filter = {
+    filter: string,
+    id: string
+}
 
 
 
-export default function Group({group, user} : {group: GroupType, user: UserType}) {
+export default function Group({group, user, setFilter} : {group: GroupType, user: UserType, setFilter:React.Dispatch<React.SetStateAction<Filter>>}) {
     const [groupData, setGroupData] = useState<GroupType>(group);
     const joinGroup = async(e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -38,7 +42,7 @@ export default function Group({group, user} : {group: GroupType, user: UserType}
         setGroupData({...groupData, groupUsers: [...groupData.groupUsers, user.userID]})
     }
 
-
+    
 
     return(
         <div className = "block">
@@ -51,6 +55,7 @@ export default function Group({group, user} : {group: GroupType, user: UserType}
             <form onSubmit={joinGroup} className="form">
                 <button type="submit" className="btn btn-primary post-button">Join Group</button> 
             </form>
+            <button onClick = {()=>setFilter({id: group.groupID, filter: "group"})} type="submit" className="btn btn-primary post-button">Select Group</button>
             
         </div>
     )
