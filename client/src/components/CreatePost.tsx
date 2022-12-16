@@ -42,7 +42,13 @@ type UserType = {
     deadlines: string[]
 }
 
-export default function CreatePost({user, reloadPosts} : {user: UserType, reloadPosts: () => void}) {
+type GroupType = {
+    groupID: string,
+    groupUsers: string[],
+    groupName: string,
+} | undefined
+
+export default function CreatePost({user, group, reloadPosts} : {user: UserType, group: GroupType, reloadPosts: () => void}) {
 
     const [postData, setPostData] = useState<PostType>({
         postID: "",
@@ -57,6 +63,17 @@ export default function CreatePost({user, reloadPosts} : {user: UserType, reload
 
     const createPost = (e : React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log(group)
+        setPostData({
+            postID: postData.postID,
+            userID: user.userID,
+            groupID: group ? group.groupID : "123",
+            postText: postData.postText,
+            postMedia: postData.postMedia,
+            postUpvotes: postData.postUpvotes,
+            postDownvotes: postData.postDownvotes,
+            postComments: postData.postComments
+        })
         axios.post("http://localhost:4002/posts/create", postData).then(() => {
             setTimeout(() => {
                 reloadPosts();
@@ -66,7 +83,7 @@ export default function CreatePost({user, reloadPosts} : {user: UserType, reload
 
     return (
         <div className="create-post-container">
-            <h2>Create Post</h2>
+            <h2>{group ? "Create Post for Group " + group.groupName : "Create Post"}</h2>
             <form onSubmit={createPost} className="form">
                 <div className="form-group">
                     <label>Enter Text Here:</label>
